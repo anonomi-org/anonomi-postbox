@@ -1,0 +1,4 @@
+include ':mailbox-core'
+include ':postbox-android'
+include ':mailbox-cli'
+include ':mailbox-lib'

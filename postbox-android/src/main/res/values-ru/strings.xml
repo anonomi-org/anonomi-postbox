@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Anonomi Postbox</string>
+    <string name="notification_channel_name">Канал Anonomi Postbox</string>
+    <string name="notification_mailbox_title_starting">Anonomi Postbox запуск</string>
+    <string name="notification_mailbox_content_starting">Запуск Postbox…</string>
+    <string name="notification_mailbox_title_setup">Настройка Anonomi Postbox</string>
+    <string name="notification_mailbox_content_setup">Ожидание сканирования QR-кода Anonomi…</string>
+    <string name="notification_mailbox_title_running">Anonomi Postbox в работе</string>
+    <string name="notification_mailbox_content_running">Ожидание сообщений…</string>
+    <string name="notification_mailbox_title_offline">Anonomi Postbox офлайн</string>
+    <string name="notification_mailbox_content_offline">Ожидание подключения к Интернету…</string>
+    <string name="notification_mailbox_content_clock_skew">Ожидание корректировки системных часов…</string>
+    <string name="button_continue">Продолжить</string>
+    <string name="button_skip_intro">Пропустить вступление</string>
+    <string name="button_back">Назад</string>
+    <string name="onboarding_0_title">Будьте на связи</string>
+    <string name="onboarding_0_description">Anonomi Postbox помогает вам оставаться на связи с вашими контактами и синхронизирует ваши сообщения с Anonomi.</string>
+    <string name="onboarding_1_title">Использовать запасное устройство</string>
+    <string name="onboarding_1_description">Установите приложение Anonomi Postbox на запасной телефон или планшет и оставьте его подключенным к источнику питания и Wi-Fi.</string>
+    <string name="onboarding_2_title">Доставка сообщений</string>
+    <string name="onboarding_2_description">Когда ваш Anonomi Postbox находится в сети, ваши контакты могут оставлять вам сообщения, даже если ваш Anonomi находится в автономном режиме. Anonomi Postbox будет получать сообщения и пересылать их в Anonomi, когда вы выйдете в сеть.</string>
+    <string name="onboarding_3_title">Зашифровано</string>
+    <string name="onboarding_3_description">Сообщения, проходящие через Anonomi Postbox, зашифрованы и не могут быть прочитаны Anonomi Postbox или этим телефоном. Anonomi Postbox просто пересылает их на ваш телефон Anonomi Messenger.</string>
+    <!-- TODO: We might want to copy string from don't kill me lib,
+          so translation memory can auto-translate most of them. -->
+    <string name="warning_dozed">Anonomi Postbox не может работать в фоновом режиме</string>
+    <string name="fix">Исправить</string>
+    <string name="ok">OK</string>
+    <string name="cancel">Отмена</string>
+    <string name="share">Поделиться</string>
+    <string name="copied">Скопировано</string>
+    <string name="link_title">Ссылка через QR-код</string>
+    <string name="link_description">Сосканируйте этот QR-код с помощью Anonomi</string>
+    <string name="link_menu_title">Показать как текст</string>
+    <string name="link_text_title">Ссылка через текст</string>
+    <string name="link_text_description">Скопируйте это и вставьте в Anonomi Desktop:</string>
+    <string name="link_cancel">Отменить настройку</string>
+    <string name="startup_headline">Запуск Anonomi Postbox</string>
+    <string name="startup_init_app">Инициализация приложения</string>
+    <!-- The number placeholder will be replaced with a percentage, e.g. 50 -> (50%) -->
+    <string name="startup_bootstrapping_tor">Подключение к сети Tor (%d %%)</string>
+    <string name="startup_publishing_onion_service">Публикация onion-сервиса Tor</string>
+    <string name="clock_skew_title">Системное время некорректно</string>
+    <string name="clock_skew_description">Проверьте время, часовой пояс и дату в настройках системы. После исправления подождите некоторое время, пока Tor восстановится.</string>
+    <string name="no_network_title">Устройство не в сети?</string>
+    <string name="no_network_description">Убедитесь, что это устройство подключено к Интернету. Как только вы подключитесь к Интернету, настройка должна начаться автоматически.</string>
+    <string name="status_running">Anonomi Postbox работает</string>
+    <string name="last_connection">Последнее подключение: %s</string>
+    <string name="now">сейчас</string>
+    <string name="never">никогда</string>
+    <string name="stop">Остановить</string>
+    <string name="unlink">Разъединить</string>
+    <string name="unlink_title">Отвязать Anonomi Postbox?</string>
+    <string name="unlink_description">Если вы отключите Anonomi Postbox, вы не сможете получать сообщения, пока Anonomi находится в автономном режиме.\n\nВы уверены, что хотите отключить Anonomi Postbox?</string>
+    <string name="confirm_stop_title">Остановить Anonomi Postbox?</string>
+    <string name="confirm_stop_description">Когда вы останавливаете Anonomi Postbox, приложение закрывается и перестает принимать сообщения, пока вы не откроете его снова.\n\nВсе уже полученные сообщения будут сохранены. Anonomi сможет собрать их, когда вы снова откроете приложение Anonomi Postbox.</string>
+    <string name="setup_complete_title">Подключено</string>
+    <string name="setup_complete_description">Ваш Anonomi Postbox был успешно связан с Anonomi.\n \nДержите Anonomi Postbox подключенным к электропитанию и Wi-Fi, чтобы он всегда был доступен.</string>
+    <string name="setup_complete_finish">Завершить</string>
+    <string name="stopping">Остановка Anonomi Postbox…</string>
+    <string name="wipe_wiping">Стирание Anonomi Postbox…</string>
+    <string name="wipe_complete_title">Удаление завершено</string>
+    <string name="wipe_complete_description">В следующий раз, когда у вас будет доступ к вашему устройству Anonomi, откройте экран настроек Postbox в приложении Anonomi, затем нажмите кнопку \"Unlink\", чтобы завершить процесс.</string>
+    <string name="sorry">Сожалеем</string>
+    <string name="activity_not_found">Приложение для этого действия не найдено</string>
+    <string name="startup_failed_activity_title">Сбой при запуске Postbox</string>
+    <string name="startup_failed_service_error">Anonomi Postbox не смог запустить необходимый компонент.\n\nОбновите приложение до последней версии и попробуйте снова.</string>
+    <string name="startup_failed_lifecycle_reuse">Anonomi Почтовый ящик уже остановлен.\n\nЗакройте приложение и попробуйте снова.</string>
+</resources>

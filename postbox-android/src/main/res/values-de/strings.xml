@@ -1,0 +1,80 @@
+<resources>
+    <string name="app_name">Anonomi Postbox</string>
+    <string name="notification_channel_name">Anonomi Postbox Channel</string>
+    <string name="notification_mailbox_title_starting">Postbox starten</string>
+    <string name="notification_mailbox_content_starting">Starten der Postbox…</string>
+    <string name="notification_mailbox_title_setup">Postbox einrichten</string>
+    <string name="notification_mailbox_content_setup">Wartet auf Anonomi, um den QR-Code zu scannen…</string>
+    <string name="notification_mailbox_title_running">Anonomi Postbox läuft</string>
+    <string name="notification_mailbox_content_running">Wartet auf Nachrichten…</string>
+    <string name="notification_mailbox_title_offline">Anonomi Postbox offline</string>
+    <string name="notification_mailbox_content_offline">Wartet auf Internetverbindung…</string>
+    <string name="notification_mailbox_content_clock_skew">Wartet auf die richtige Systemzeit…</string>
+    <string name="button_continue">Weiter</string>
+    <string name="button_skip_intro">Einführung überspringen</string>
+    <string name="button_back">Zurück</string>
+
+    <string name="onboarding_0_title">Erreichbar bleiben</string>
+    <string name="onboarding_0_description">Die Postbox hilft dir, mit deinen Kontakten in Kontakt zu bleiben und synchronisiert deine Nachrichten mit Anonomi.</string>
+    <string name="onboarding_1_title">Verwende ein Ersatzgerät</string>
+    <string name="onboarding_1_description">Installiere die Postbox-App auf einem Ersatztelefon oder -tablet und verbinde es mit Strom und WLAN.</string>
+    <string name="onboarding_2_title">Zustellung der Nachricht</string>
+    <string name="onboarding_2_description">Wenn deine Postbox online ist, können deine Kontakte Nachrichten für dich hinterlassen, auch wenn dein Anonomi offline ist. Die Postbox empfängt die Nachrichten und leitet sie an Anonomi weiter, wenn du wieder online bist.</string>
+    <string name="onboarding_3_title">Verschlüsselt</string>
+    <string name="onboarding_3_description">Nachrichten, die über die Postbox laufen, sind verschlüsselt und können weder von der Postbox noch von diesem Telefon gelesen werden. Die Postbox leitet sie einfach an dein Anonomi Messenger-Telefon weiter.</string>
+
+    <!-- TODO: We might want to copy string from don't kill me lib,
+          so translation memory can auto-translate most of them. -->
+    <string name="warning_dozed">Anonomi Postbox konnte nicht im Hintergrund ausgeführt werden</string>
+    <string name="fix">Beheben</string>
+    <string name="ok">OK</string>
+    <string name="cancel">Abbrechen</string>
+    <string name="share">Freigabe</string>
+    <string name="copied">Kopiert</string>
+
+    <string name="link_title">Verknüpfung über QR-Code</string>
+    <string name="link_description">Scanne diesen QR-Code mit Anonomi</string>
+    <string name="link_menu_title">Als Text anzeigen</string>
+    <string name="link_text_title">Als Text verlinken</string>
+    <string name="link_text_description">Kopiere dies und füge es in Anonomi Desktop ein:</string>
+    <string name="link_cancel">Einrichtung abbrechen</string>
+
+    <string name="startup_headline">Starten der Postbox</string>
+    <string name="startup_init_app">Initialisierung der App</string>
+    <!-- The number placeholder will be replaced with a percentage, e.g. 50 -> (50%) -->
+    <string name="startup_bootstrapping_tor">Verbindung mit dem Tor-Netzwerk (%d%%)</string>
+    <string name="startup_publishing_onion_service">Tor Onion-Dienst veröffentlichen</string>
+
+    <string name="clock_skew_title">Falsche Systemzeit</string>
+    <string name="clock_skew_description">Überprüfe deine Zeit, Zeitzone und das Datum in den Systemeinstellungen. Warte nach der Korrektur einige Zeit, bis Tor wieder funktioniert.</string>
+
+    <string name="no_network_title">Gerät offline?</string>
+    <string name="no_network_description">Bitte stelle sicher, dass das Gerät online und mit dem Internet verbunden ist. Sobald du online bist, sollte die Einrichtung hier automatisch fortgesetzt werden.</string>
+
+    <string name="status_running">Postbox läuft</string>
+    <string name="last_connection">Letzte Verbindung: %s</string>
+    <string name="now">jetzt</string>
+    <string name="never">nie</string>
+    <string name="stop">Stopp</string>
+    <string name="unlink">Trennen</string>
+    <string name="unlink_title">Postbox trennen?</string>
+    <string name="unlink_description">Wenn du die Verknüpfung deiner Postbox aufhebst, kannst du keine Nachrichten empfangen, während Anonomi offline ist. Bist du sicher, dass du die Verknüpfung deiner Postbox aufheben willst?</string>
+    <string name="confirm_stop_title">Postbox stoppen?</string>
+    <string name="confirm_stop_description">Wenn du deine Postbox beendest, wird die App heruntergefahren und empfängt keine Nachrichten mehr, bis du die App wieder öffnest.\n\Nachrichten, die bereits empfangen wurden, werden gespeichert. Anonomi kann sie abrufen, wenn du die Postbox-App erneut öffnest.</string>
+
+    <string name="setup_complete_title">Verbunden</string>
+    <string name="setup_complete_description">Deine Postbox wurde erfolgreich mit Anonomi verknüpft.\n\nLass deine Postbox mit Strom und WLAN verbunden, damit sie immer online ist.</string>
+    <string name="setup_complete_finish">Fertig</string>
+
+    <string name="stopping">Stoppen der Postbox…</string>
+
+    <string name="wipe_wiping">Löschen der Postbox…</string>
+    <string name="wipe_complete_title">Löschen abgeschlossen</string>
+    <string name="wipe_complete_description">Wenn du das nächste Mal Zugang zu deinem Anonomi-Gerät hast, öffne bitte die Postbox-Einstellungen in der Anonomi-App und tippe dann auf die Schaltfläche \"Trennen\", um den Vorgang abzuschließen.</string>
+
+    <string name="sorry">Entschuldigung</string>
+    <string name="activity_not_found">Für diese Aktion wurde keine App gefunden</string>
+    <string name="startup_failed_activity_title">Fehler beim Start der Postbox</string>
+    <string name="startup_failed_service_error">Postbox konnte eine erforderliche Komponente nicht starten.\n\nBitte aktualisiere auf die neueste Version der App und versuche es erneut.</string>
+    <string name="startup_failed_lifecycle_reuse">Die Postbox wurde bereits gestoppt.\n\nBitte schließe die App und versuche es erneut.</string>
+</resources>

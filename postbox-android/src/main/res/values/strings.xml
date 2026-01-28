@@ -1,0 +1,80 @@
+<resources>
+    <string name="app_name">Anonomi Postbox</string>
+    <string name="notification_channel_name">Anonomi Postbox Channel</string>
+    <string name="notification_mailbox_title_starting">Anonomi Postbox starting</string>
+    <string name="notification_mailbox_content_starting">Starting mailbox…</string>
+    <string name="notification_mailbox_title_setup">Setting up Anonomi Postbox</string>
+    <string name="notification_mailbox_content_setup">Waiting for Anonomi to scan QR code…</string>
+    <string name="notification_mailbox_title_running">Anonomi Postbox running</string>
+    <string name="notification_mailbox_content_running">Waiting for messages…</string>
+    <string name="notification_mailbox_title_offline">Anonomi Postbox offline</string>
+    <string name="notification_mailbox_content_offline">Waiting for internet connection…</string>
+    <string name="notification_mailbox_content_clock_skew">Waiting for correct system clock…</string>
+    <string name="button_continue">Continue</string>
+    <string name="button_skip_intro">Skip Intro</string>
+    <string name="button_back">Back</string>
+
+    <string name="onboarding_0_title">Stay Reachable</string>
+    <string name="onboarding_0_description">The Anonomi Postbox helps you to stay in touch with your contacts and synchronizes your messages to Anonomi.</string>
+    <string name="onboarding_1_title">Use a spare device</string>
+    <string name="onboarding_1_description">Install the Anonomi Postbox app on a spare phone or tablet and leave it connected to power and WiFi.</string>
+    <string name="onboarding_2_title">Message delivery</string>
+    <string name="onboarding_2_description">When your Anonomi Postbox is online, your contacts can leave messages for you even if your Anonomi is offline. The Anonomi Postbox will receive the messages, and forward them to Anonomi when you come online.</string>
+    <string name="onboarding_3_title">Encrypted</string>
+    <string name="onboarding_3_description">Messages going through the Anonomi Postbox are encrypted and cannot be read by the Anonomi Postbox or this phone. The Anonomi Postbox simply forwards them to your Anonomi Messenger phone.</string>
+
+    <!-- TODO: We might want to copy string from don't kill me lib,
+          so translation memory can auto-translate most of them. -->
+    <string name="warning_dozed">Anonomi Postbox was unable to run in the background</string>
+    <string name="fix">Fix</string>
+    <string name="ok">OK</string>
+    <string name="cancel">Cancel</string>
+    <string name="share">Share</string>
+    <string name="copied">Copied</string>
+
+    <string name="link_title">Link via QR code</string>
+    <string name="link_description">Scan this QR code with Anonomi</string>
+    <string name="link_menu_title">Show as text</string>
+    <string name="link_text_title">Link via text</string>
+    <string name="link_text_description">Copy this and paste it into Anonomi Desktop:</string>
+    <string name="link_cancel">Cancel Setup</string>
+
+    <string name="startup_headline">Starting Anonomi Postbox</string>
+    <string name="startup_init_app">Initializing app</string>
+    <!-- The number placeholder will be replaced with a percentage, e.g. 50 -> (50%) -->
+    <string name="startup_bootstrapping_tor">Connecting to the Tor network (%d%%)</string>
+    <string name="startup_publishing_onion_service">Publishing the Tor onion service</string>
+
+    <string name="clock_skew_title">Wrong system clock</string>
+    <string name="clock_skew_description">Check your time, timezone, and date in system settings. After fixing, wait some time for Tor to recover.</string>
+
+    <string name="no_network_title">Device offline?</string>
+    <string name="no_network_description">Please ensure this device is online and connected to the Internet. Once you\'re online, setup should pick up automatically here.</string>
+
+    <string name="status_running">Anonomi Postbox is running</string>
+    <string name="last_connection">Last connection: %s</string>
+    <string name="now">now</string>
+    <string name="never">never</string>
+    <string name="stop">Stop</string>
+    <string name="unlink">Unlink</string>
+    <string name="unlink_title">Unlink mailbox?</string>
+    <string name="unlink_description">If you unlink your Anonomi Postbox, you won\'t be able to receive messages while Anonomi is offline.\n\nAre you sure you want to unlink your Anonomi Postbox?</string>
+    <string name="confirm_stop_title">Stop Anonomi Postbox?</string>
+    <string name="confirm_stop_description">When you stop your Anonomi Postbox, the app will shut down and it will stop receiving messages until you open the app again.\n\nAny messages that have already been received will be saved. Anonomi will be able to collect them when you reopen the Anonomi Postbox app.</string>
+
+    <string name="setup_complete_title">Connected</string>
+    <string name="setup_complete_description">Your Anonomi Postbox has been successfully linked with Anonomi.\n\nKeep your Anonomi Postbox connected to power and Wi-Fi so it\'s always online.</string>
+    <string name="setup_complete_finish">Finish</string>
+
+    <string name="stopping">Stopping Anonomi Postbox…</string>
+
+    <string name="wipe_wiping">Wiping Anonomi Postbox…</string>
+    <string name="wipe_complete_title">Wiping complete</string>
+    <string name="wipe_complete_description">Next time you have access to your Anonomi device, please open the Anonomi Postbox settings screen in the Anonomi app, then tap the \"Unlink\" button to complete the process.</string>
+
+    <string name="sorry">Sorry</string>
+    <string name="activity_not_found">No app found for this action</string>
+    <string name="startup_failed_activity_title">Anonomi Postbox Startup Failure</string>
+    <string name="startup_failed_service_error">Anonomi Postbox was unable to start a required component.\n\nPlease upgrade to the latest version of the app and try again.</string>
+    <string name="startup_failed_lifecycle_reuse">Anonomi Postbox has already stopped.\n\nPlease close the app and try again.</string>
+</resources>

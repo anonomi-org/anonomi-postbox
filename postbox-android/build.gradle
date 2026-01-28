@@ -1,0 +1,227 @@
+plugins {
+	id 'com.android.application'
+	id 'androidx.navigation.safeargs'
+	id 'kotlin-android'
+	id 'kotlin-kapt'
+	id 'dagger.hilt.android.plugin'
+	id "org.jlleitschuh.gradle.ktlint" version "$ktlint_plugin_version"
+	id 'checkstyle'
+}
+
+import com.android.build.gradle.tasks.MergeResources
+import java.util.Properties
+import java.io.FileInputStream
+
+def keystoreProps = new Properties()
+def keystoreFile = rootProject.file("keystore.properties")
+if (keystoreFile.exists()) {
+	keystoreProps.load(new FileInputStream(keystoreFile))
+}
+
+def envOrNull = { String name ->
+	def v = System.getenv(name)
+	return (v != null && !v.trim().isEmpty()) ? v.trim() : null
+}
+
+def hasCiSigning = {
+	envOrNull("ANDROID_KEYSTORE_PATH") != null &&
+		envOrNull("ANDROID_KEYSTORE_PASSWORD") != null &&
+		envOrNull("ANDROID_KEY_ALIAS") != null &&
+		envOrNull("ANDROID_KEY_PASSWORD") != null
+}
+checkstyle {
+    configFile = new File('../config/checkstyle/checkstyle.xml')
+}
+
+android {
+    compileSdkVersion 33
+    buildToolsVersion "33.0.1"
+
+    namespace "org.anonomi.postbox"
+
+	signingConfigs {
+		release {
+			if (keystoreFile.exists()) {
+				// Local dev: values come from keystore.properties in repo root
+				// storeFile is relative to repo root, but mailbox module is nested, so keep your "../"
+				storeFile file(keystoreProps['storeFile'])
+				storePassword keystoreProps['storePassword']
+				keyAlias keystoreProps['keyAlias']
+				keyPassword keystoreProps['keyPassword']
+			} else if (hasCiSigning()) {
+				// CI: GitHub Actions writes keystore to a path and sets env vars
+				storeFile file(envOrNull("ANDROID_KEYSTORE_PATH"))
+				storePassword envOrNull("ANDROID_KEYSTORE_PASSWORD")
+				keyAlias envOrNull("ANDROID_KEY_ALIAS")
+				keyPassword envOrNull("ANDROID_KEY_PASSWORD")
+			}
+		}
+	}
+
+
+	defaultConfig {
+        applicationId "org.anonomi.postbox"
+        minSdkVersion 16
+        targetSdkVersion 33
+        versionCode 10000
+        versionName "1.0.0"
+        multiDexEnabled true
+        vectorDrawables.useSupportLibrary = true
+
+        testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
+        testInstrumentationRunnerArguments disableAnalytics: 'true'
+    }
+
+    buildTypes {
+        debug {
+            applicationIdSuffix ".debug"
+            shrinkResources false
+            minifyEnabled true
+            crunchPngs false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+	    release {
+		    if (keystoreFile.exists() || hasCiSigning()) {
+			    signingConfig signingConfigs.release
+		    }
+		    shrinkResources false
+		    minifyEnabled true
+		    crunchPngs false
+		    proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+	    }
+    }
+
+    buildFeatures {
+        viewBinding true
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+        coreLibraryDesugaringEnabled true
+    }
+
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
+
+    packagingOptions {
+        exclude 'META-INF/*'
+        exclude 'META-INF/licenses/*'
+        exclude '**/attach_hotspot_windows.dll'
+    }
+
+    lintOptions {
+        warning 'MissingTranslation'
+        warning 'ExtraTranslation'
+    }
+}
+
+configurations {
+    tor
+}
+
+dependencies {
+    implementation project(path: ':mailbox-core', configuration: 'default')
+    implementation 'org.briarproject:dont-kill-me-lib:0.2.5'
+
+    implementation 'com.github.tony19:logback-android:2.0.1'
+    implementation 'androidx.appcompat:appcompat:1.6.1'
+    implementation "androidx.activity:activity-ktx:1.6.1"
+    implementation "androidx.fragment:fragment-ktx:1.5.5"
+    implementation 'androidx.preference:preference-ktx:1.2.0'
+
+    def lifecycle_version = "2.5.1"
+    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version"
+    implementation "androidx.lifecycle:lifecycle-livedata-ktx:$lifecycle_version"
+    implementation "androidx.lifecycle:lifecycle-runtime-ktx:$lifecycle_version"
+    implementation "androidx.lifecycle:lifecycle-common-java8:$lifecycle_version"
+    implementation "androidx.lifecycle:lifecycle-viewmodel-savedstate:$lifecycle_version"
+
+    implementation "androidx.navigation:navigation-fragment-ktx:$nav_version"
+    implementation "androidx.navigation:navigation-ui-ktx:$nav_version"
+
+    implementation "androidx.constraintlayout:constraintlayout:2.1.4"
+    implementation "com.google.android.material:material:1.8.0"
+    implementation "com.google.dagger:hilt-android:$hilt_version"
+    kapt "com.google.dagger:hilt-compiler:$hilt_version"
+
+    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.2.2'
+
+    def multidex_version = "2.0.1"
+    implementation "androidx.multidex:multidex:$multidex_version"
+
+    tor "org.briarproject:tor-android:$tor_version"
+    tor "org.briarproject:obfs4proxy-android:$obfs4_version"
+
+    testImplementation 'junit:junit:4.13.2'
+
+    androidTestImplementation 'androidx.test.ext:junit:1.1.5'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
+}
+
+def torBinariesDir = 'src/main/res/raw'
+def torLibsDir = 'src/main/jniLibs'
+
+task cleanTorBinaries {
+    doLast {
+        delete fileTree(torBinariesDir) { include '*.zip' }
+        delete fileTree(torLibsDir) { include '**/*.so' }
+    }
+}
+
+clean.dependsOn cleanTorBinaries
+
+task unpackTorBinaries {
+    doLast {
+        configurations.tor.each { outer ->
+            zipTree(outer).each { inner ->
+                if (inner.name.endsWith('_arm_pie.zip')) {
+                    copy {
+                        from zipTree(inner)
+                        into torLibsDir
+                        rename '(.*)', 'armeabi-v7a/lib$1.so'
+                    }
+                } else if (inner.name.endsWith('_arm64_pie.zip')) {
+                    copy {
+                        from zipTree(inner)
+                        into torLibsDir
+                        rename '(.*)', 'arm64-v8a/lib$1.so'
+                    }
+                } else if (inner.name.endsWith('_x86_pie.zip')) {
+                    copy {
+                        from zipTree(inner)
+                        into torLibsDir
+                        rename '(.*)', 'x86/lib$1.so'
+                    }
+                } else if (inner.name.endsWith('_x86_64_pie.zip')) {
+                    copy {
+                        from zipTree(inner)
+                        into torLibsDir
+                        rename '(.*)', 'x86_64/lib$1.so'
+                    }
+                }
+            }
+        }
+    }
+    dependsOn cleanTorBinaries
+}
+
+tasks.withType(MergeResources) {
+    inputs.dir torBinariesDir
+    inputs.dir torLibsDir
+    dependsOn unpackTorBinaries
+}
+
+// Copy release APK to Anonomi assets
+tasks.register("copyApkToAnonomiAssets", Copy) {
+    dependsOn("assembleRelease")
+    from("$buildDir/outputs/apk/release") {
+        include("*.apk")
+        rename { "anonomi-postbox.apk" }
+    }
+    into("$rootDir/../anonomi-android/src/main/assets/")
+}
+
+apply from: "../gradle/ktlint.gradle"
+apply from: "../gradle/checkstyle.gradle"

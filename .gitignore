@@ -1,0 +1,34 @@
+.metadata
+*.tmp
+*.swp
+
+# Windows thumbnail db
+Thumbs.db
+
+# OSX files
+.DS_Store
+
+# Eclipse project files
+.classpath
+.project
+.settings
+
+# Local configuration file (sdk path, etc)
+local.properties
+
+# Android Studio
+.idea/*
+!.idea/inspectionProfiles/
+!.idea/runConfigurations/
+!.idea/codeStyleSettings.xml
+!.idea/codeStyles
+!.idea/scopes/
+!.idea/copyright/
+!.idea/dictionaries/briar.xml
+.gradle
+build/
+captures
+*.iml
+projectFilesBackup/
+keystore.properties
+keystore.properties

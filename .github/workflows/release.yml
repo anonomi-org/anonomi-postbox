@@ -1,0 +1,66 @@
+name: Release (Postbox APK)
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+jobs:
+  build-release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Cache Gradle
+        uses: gradle/actions/setup-gradle@v3
+
+      - name: Decode keystore
+        run: |
+          printf '%s' "${{ secrets.ANDROID_KEYSTORE_BASE64 }}" | base64 --decode > "${{ runner.temp }}/anonomi.keystore"
+
+      - name: Build signed Postbox APK
+        env:
+          ANDROID_KEYSTORE_PATH: ${{ runner.temp }}/anonomi.keystore
+          ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+        run: |
+          chmod +x ./gradlew
+          ./gradlew :postbox-android:assembleRelease
+
+      - name: Collect artifacts
+        run: |
+          set -e
+          mkdir -p dist
+
+          echo "Postbox APKs:"
+          ls -lah postbox-android/build/outputs/apk/release/ || true
+          cp postbox-android/build/outputs/apk/release/*.apk dist/ || true
+
+          echo "Collected:"
+          ls -lah dist
+
+          # Require at least one signed APK (no '-unsigned' in filename)
+          if ! ls dist/*.apk | grep -vq -- '-unsigned\.apk'; then
+            echo "ERROR: No signed Postbox APK found."
+            exit 1
+          fi
+
+      - name: Create GitHub Release and upload APKs
+        uses: softprops/action-gh-release@v2
+        with:
+          files: dist/*.apk
