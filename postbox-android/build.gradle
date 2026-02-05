@@ -63,8 +63,8 @@ android {
         applicationId "org.anonomi.postbox"
         minSdkVersion 16
         targetSdkVersion 33
-        versionCode 10000
-        versionName "1.0.0"
+        versionCode 10001
+        versionName "1.0.1"
         multiDexEnabled true
         vectorDrawables.useSupportLibrary = true
 
