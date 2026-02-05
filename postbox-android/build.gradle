@@ -174,8 +174,19 @@ clean.dependsOn cleanTorBinaries
 
 task unpackTorBinaries {
     doLast {
-        configurations.tor.each { outer ->
-            zipTree(outer).each { inner ->
+        configurations.tor.each { jar ->
+            // New format: .so files directly in architecture directories (tor 0.4.8+)
+            copy {
+                from(zipTree(jar)) {
+                    include 'armeabi-v7a/*.so'
+                    include 'arm64-v8a/*.so'
+                    include 'x86/*.so'
+                    include 'x86_64/*.so'
+                }
+                into torLibsDir
+            }
+            // Old format: zip files (obfs4proxy)
+            zipTree(jar).each { inner ->
                 if (inner.name.endsWith('_arm_pie.zip')) {
                     copy {
                         from zipTree(inner)
