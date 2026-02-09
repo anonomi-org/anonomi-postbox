@@ -25,3 +25,14 @@ data class Contact(
     val inboxId: String,
     val outboxId: String,
 )
+
+data class ContactPostRequest(
+    val contactId: Int,
+    val token: BytesWrapper,
+    val inboxId: BytesWrapper,
+    val outboxId: BytesWrapper,
+)
+
+data class BytesWrapper(
+    val bytes: String, // base64
+)

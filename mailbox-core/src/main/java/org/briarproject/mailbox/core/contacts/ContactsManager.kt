@@ -36,6 +36,8 @@ import org.briarproject.mailbox.core.system.RandomIdManager
 import org.briarproject.mailbox.core.util.LogUtils.logException
 import org.slf4j.LoggerFactory.getLogger
 import javax.inject.Inject
+import java.util.Base64
+
 
 class ContactsManager @Inject constructor(
     private val db: Database,
@@ -75,29 +77,50 @@ class ContactsManager @Inject constructor(
      */
     suspend fun postContact(call: ApplicationCall) {
         authManager.assertIsOwner(call.principal())
-        val c: Contact = try {
+
+        val req: ContactPostRequest = try {
             call.receive()
         } catch (e: JacksonException) {
             logException(LOG, e) { "Error while receiving contact" }
-            throw BadRequestException("Unable to deserialise Contact: ${e.message}", e)
+            throw BadRequestException("Unable to deserialise ContactPostRequest: ${e.message}", e)
         } catch (e: UnsupportedMediaTypeException) {
             logException(LOG, e) { "Error while receiving contact" }
-            throw BadRequestException("Unable to deserialise Contact: ${e.message}", e)
+            throw BadRequestException("Unsupported content type: ${e.message}", e)
         }
 
-        randomIdManager.assertIsRandomId(c.token)
-        randomIdManager.assertIsRandomId(c.inboxId)
-        randomIdManager.assertIsRandomId(c.outboxId)
+        val tokenHex = req.token.bytes.base64ToHex()
+        val inboxHex = req.inboxId.bytes.base64ToHex()
+        val outboxHex = req.outboxId.bytes.base64ToHex()
+
+        // Keep existing validation + DB model unchanged
+        randomIdManager.assertIsRandomId(tokenHex)
+        randomIdManager.assertIsRandomId(inboxHex)
+        randomIdManager.assertIsRandomId(outboxHex)
+
+        val c = Contact(
+            contactId = req.contactId,
+            token = tokenHex,
+            inboxId = inboxHex,
+            outboxId = outboxHex
+        )
 
         val status = db.write { txn ->
-            if (db.getContact(txn, c.contactId) != null) {
-                Conflict
-            } else {
+            if (db.getContact(txn, c.contactId) != null) Conflict
+            else {
                 db.addContact(txn, c)
                 Created
             }
         }
         call.response.status(status)
+    }
+
+    private fun String.base64ToHex(): String {
+        val bytes = try {
+            Base64.getDecoder().decode(this)
+        } catch (e: IllegalArgumentException) {
+            throw BadRequestException("Invalid base64 in 'bytes' field")
+        }
+        return bytes.joinToString("") { b -> "%02x".format(b.toInt() and 0xff) }
     }
 
     /**
