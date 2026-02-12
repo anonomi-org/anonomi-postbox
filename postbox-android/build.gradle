@@ -39,6 +39,11 @@ android {
 
     namespace "org.anonomi.postbox"
 
+    dependenciesInfo {
+        includeInApk = false
+        includeInBundle = false
+    }
+
 	signingConfigs {
 		release {
 			if (keystoreFile.exists()) {
@@ -63,8 +68,8 @@ android {
         applicationId "org.anonomi.postbox"
         minSdkVersion 16
         targetSdkVersion 33
-        versionCode 10003
-        versionName "1.0.3"
+        versionCode 10004
+        versionName "1.0.4"
         multiDexEnabled true
         vectorDrawables.useSupportLibrary = true
 
