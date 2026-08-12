@@ -38,7 +38,6 @@ import org.slf4j.LoggerFactory.getLogger
 import javax.inject.Inject
 import java.util.Base64
 
-
 class ContactsManager @Inject constructor(
     private val db: Database,
     private val authManager: AuthManager,

@@ -29,7 +29,6 @@ import io.ktor.server.auth.AuthenticationProvider
 import io.ktor.server.auth.UnauthorizedResponse
 import io.ktor.server.auth.parseAuthorizationHeader
 import io.ktor.server.response.respond
-import org.briarproject.mailbox.core.util.LogUtils.debug
 import org.slf4j.LoggerFactory.getLogger
 
 private val AUTH_KEY_BEARER: Any = "BearerAuth"
