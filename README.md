@@ -283,8 +283,8 @@ by running relays and bridges.
 
 ## License
 
-Anonomi is free and open source software, licensed under the
-**GNU General Public License v3.0 (GPL-3.0)**.
+Anonomi Postbox is free and open source software, licensed under the
+**GNU Affero General Public License v3.0 or later (AGPL-3.0-or-later)**.
 
 This means you are free to:
 - Use the software for any purpose

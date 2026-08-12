@@ -1,0 +1,5 @@
+Version 1.0.5:
+* Upgraded Tor to 0.4.9.11
+* Replaced obfs4proxy with lyrebird 0.6.2, adding snowflake alongside obfs4 and meek
+* Refreshed the bundled bridge list and the countries each transport is used in
+* Release APKs are now published under a stable filename and verified as signed before upload
