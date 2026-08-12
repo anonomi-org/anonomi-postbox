@@ -3,7 +3,7 @@ ext {
     hilt_version = '2.44.2'
     nav_version = '2.5.3'
     tor_version = '0.4.9.11'
-    obfs4_version = '0.0.14'
+    lyrebird_version = '0.6.2'
     junit_version = '5.7.2'
     mockk_version = '1.10.4'
     ktlint_plugin_version = '10.2.1'
