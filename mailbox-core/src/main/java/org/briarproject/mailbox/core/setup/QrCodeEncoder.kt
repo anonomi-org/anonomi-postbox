@@ -25,7 +25,6 @@ import com.google.zxing.qrcode.QRCodeWriter
 import org.briarproject.mailbox.core.db.DbException
 import org.briarproject.mailbox.core.db.TransactionManager
 import org.briarproject.mailbox.core.tor.TorPlugin
-import org.briarproject.mailbox.core.util.LogUtils.logException
 import org.briarproject.mailbox.core.util.StringUtils.fromHexString
 import org.slf4j.LoggerFactory.getLogger
 import java.nio.ByteBuffer

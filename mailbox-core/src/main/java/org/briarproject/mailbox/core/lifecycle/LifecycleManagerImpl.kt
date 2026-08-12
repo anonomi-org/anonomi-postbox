@@ -37,12 +37,10 @@ import org.briarproject.mailbox.core.lifecycle.LifecycleManager.StartResult.SERV
 import org.briarproject.mailbox.core.lifecycle.LifecycleManager.StartResult.SUCCESS
 import org.briarproject.mailbox.core.setup.WipeManager
 import org.briarproject.mailbox.core.system.System
-import org.briarproject.mailbox.core.util.LogUtils.info
 import org.briarproject.mailbox.core.util.LogUtils.logDuration
 import org.briarproject.mailbox.core.util.LogUtils.logException
 import org.briarproject.mailbox.core.util.LogUtils.now
 import org.briarproject.mailbox.core.util.LogUtils.trace
-import org.briarproject.mailbox.core.util.LogUtils.warn
 import org.slf4j.LoggerFactory.getLogger
 import java.util.concurrent.CopyOnWriteArrayList
 import java.util.concurrent.CountDownLatch
