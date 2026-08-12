@@ -26,37 +26,53 @@ import java.util.List;
 public interface CircumventionProvider {
 
 	enum BridgeType {
-		DEFAULT_OBFS4,
-		NON_DEFAULT_OBFS4,
-		VANILLA,
-		MEEK
+		DEFAULT_OBFS4("d"),
+		NON_DEFAULT_OBFS4("n"),
+		VANILLA("v"),
+		MEEK("m"),
+		SNOWFLAKE("s");
+
+		/**
+		 * The letter identifying this type's bridge resource files, which are
+		 * named {@code bridges-<letter>-<country code>}.
+		 */
+		final String letter;
+
+		BridgeType(String letter) {
+			this.letter = letter;
+		}
 	}
 
 	/**
-	 * Countries where bridge connections are likely to work.
-	 * Should be the union of
-	 * {@link #DEFAULT_BRIDGES}, {@link #NON_DEFAULT_BRIDGES} and
-	 * {@link #DPI_BRIDGES}.
+	 * Countries where default (publicly listed) obfs4 bridges are likely to
+	 * work. Empty upstream: listed bridges are the first thing censors block,
+	 * so they're only reached via the fallback in
+	 * {@link #getSuitableBridgeTypes(String)}.
 	 */
-	String[] BRIDGES = {"BY", "CN", "EG", "IR", "RU", "TM", "VE"};
+	String[] COUNTRIES_DEFAULT_OBFS4 = {};
 
 	/**
-	 * Countries where default obfs4 or vanilla bridges are likely to work.
-	 * Should be a subset of {@link #BRIDGES}.
+	 * Countries where non-default (unlisted) obfs4 bridges are likely to work.
 	 */
-	String[] DEFAULT_BRIDGES = {"EG", "VE"};
+	String[] COUNTRIES_NON_DEFAULT_OBFS4 =
+			{"BY", "CN", "EG", "HK", "IR", "MM", "RU", "TM"};
 
 	/**
-	 * Countries where non-default obfs4 or vanilla bridges are likely to work.
-	 * Should be a subset of {@link #BRIDGES}.
+	 * Countries where vanilla bridges are likely to work. Empty upstream:
+	 * vanilla bridges are blocked by DPI wherever bridges are needed at all.
 	 */
-	String[] NON_DEFAULT_BRIDGES = {"BY", "RU", "TM"};
+	String[] COUNTRIES_VANILLA = {};
 
 	/**
-	 * Countries where vanilla bridges are blocked via DPI but non-default
-	 * obfs4 bridges and meek may work. Should be a subset of {@link #BRIDGES}.
+	 * Countries where meek is likely to work.
 	 */
-	String[] DPI_BRIDGES = {"CN", "IR"};
+	String[] COUNTRIES_MEEK = {"TM"};
+
+	/**
+	 * Countries where snowflake is likely to work.
+	 */
+	String[] COUNTRIES_SNOWFLAKE =
+			{"BY", "CN", "EG", "HK", "IR", "MM", "RU", "TM"};
 
 	/**
 	 * Returns true if bridge connections of some type work in the given
@@ -65,13 +81,18 @@ public interface CircumventionProvider {
 	boolean doBridgesWork(String countryCode);
 
 	/**
-	 * Returns the types of bridge connection that are suitable for the given
-	 * country, or {@link #DEFAULT_BRIDGES} if no bridge type is known
-	 * to work.
+	 * Returns every type of bridge connection that is suitable for the given
+	 * country, or default obfs4 and vanilla bridges if no bridge type is known
+	 * to work there.
 	 */
 	List<BridgeType> getSuitableBridgeTypes(String countryCode);
 
+	/**
+	 * Returns the bridge lines of the given type for the given country,
+	 * falling back to the country-independent list if there are no bridges
+	 * specific to that country.
+	 */
 	@IoExecutor
-	List<String> getBridges(BridgeType type);
+	List<String> getBridges(BridgeType type, String countryCode);
 
 }

@@ -172,8 +172,8 @@ public abstract class AbstractTorPlugin
 		return new File(torDirectory, "tor");
 	}
 
-	protected File getObfs4ExecutableFile() {
-		return new File(torDirectory, "obfs4proxy");
+	protected File getLyrebirdExecutableFile() {
+		return new File(torDirectory, "lyrebird");
 	}
 
 	public StateFlow<TorState> getState() {
@@ -294,7 +294,7 @@ public abstract class AbstractTorPlugin
 			//noinspection ResultOfMethodCallIgnored
 			doneFile.delete();
 			installTorExecutable();
-			installObfs4Executable();
+			installLyrebirdExecutable();
 			if (!doneFile.createNewFile())
 				LOG.warn("");
 		} catch (IOException e) {
@@ -315,11 +315,11 @@ public abstract class AbstractTorPlugin
 		if (!torFile.setExecutable(true, true)) throw new IOException();
 	}
 
-	protected void installObfs4Executable() throws IOException {
-		// info(LOG, () -> "Installing obfs4proxy binary for " + architecture);
-		File obfs4File = getObfs4ExecutableFile();
-		extract(getObfs4InputStream(), obfs4File);
-		if (!obfs4File.setExecutable(true, true)) throw new IOException();
+	protected void installLyrebirdExecutable() throws IOException {
+		// info(LOG, () -> "Installing lyrebird binary for " + architecture);
+		File lyrebirdFile = getLyrebirdExecutableFile();
+		extract(getLyrebirdInputStream(), lyrebirdFile);
+		if (!lyrebirdFile.setExecutable(true, true)) throw new IOException();
 	}
 
 	private InputStream getTorInputStream() throws IOException {
@@ -330,9 +330,9 @@ public abstract class AbstractTorPlugin
 		return zin;
 	}
 
-	private InputStream getObfs4InputStream() throws IOException {
+	private InputStream getLyrebirdInputStream() throws IOException {
 		InputStream in = resourceProvider
-				.getResourceInputStream("obfs4proxy_" + architecture, ".zip");
+				.getResourceInputStream("lyrebird_" + architecture, ".zip");
 		ZipInputStream zin = new ZipInputStream(in);
 		if (zin.getNextEntry() == null) throw new IOException();
 		return zin;
@@ -358,9 +358,10 @@ public abstract class AbstractTorPlugin
 		strb.append("GeoIPFile\n");
 		strb.append("GeoIPv6File\n");
 		append(strb, "ConnectionPadding", 0);
-		String obfs4Path = getObfs4ExecutableFile().getAbsolutePath();
-		append(strb, "ClientTransportPlugin obfs4 exec", obfs4Path);
-		append(strb, "ClientTransportPlugin meek_lite exec", obfs4Path);
+		String lyrebirdPath = getLyrebirdExecutableFile().getAbsolutePath();
+		append(strb, "ClientTransportPlugin obfs4 exec", lyrebirdPath);
+		append(strb, "ClientTransportPlugin meek_lite exec", lyrebirdPath);
+		append(strb, "ClientTransportPlugin snowflake exec", lyrebirdPath);
 		//noinspection CharsetObjectCanBeUsed
 		return new ByteArrayInputStream(
 				strb.toString().getBytes(Charset.forName("UTF-8")));
@@ -475,7 +476,7 @@ public abstract class AbstractTorPlugin
 		controlConnection.setConf("DisableNetwork", enable ? "0" : "1");
 	}
 
-	private void enableBridges(List<BridgeType> bridgeTypes)
+	private void enableBridges(List<BridgeType> bridgeTypes, String country)
 			throws IOException {
 		if (!state.setBridgeTypes(bridgeTypes)) return; // Unchanged
 		if (bridgeTypes.isEmpty()) {
@@ -485,7 +486,8 @@ public abstract class AbstractTorPlugin
 			Collection<String> conf = new ArrayList<>();
 			conf.add("UseBridges 1");
 			for (BridgeType bridgeType : bridgeTypes) {
-				conf.addAll(circumventionProvider.getBridges(bridgeType));
+				conf.addAll(circumventionProvider
+						.getBridges(bridgeType, country));
 			}
 			controlConnection.setConf(conf);
 		}
@@ -676,7 +678,7 @@ public abstract class AbstractTorPlugin
 
 			try {
 				if (enableNetwork) {
-					enableBridges(bridgeTypes);
+					enableBridges(bridgeTypes, country);
 					enableConnectionPadding(enableConnectionPadding);
 					enableIpv6(ipv6Only);
 				}

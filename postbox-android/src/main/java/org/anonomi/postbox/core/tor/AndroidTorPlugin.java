@@ -59,13 +59,19 @@ public class AndroidTorPlugin extends AbstractTorPlugin {
 			asList("armeabi-v7a", "arm64-v8a", "x86", "x86_64");
 
 	private static final String TOR_LIB_NAME = "libtor.so";
-	private static final String OBFS4_LIB_NAME = "libobfs4proxy.so";
+	private static final String LYREBIRD_LIB_NAME = "liblyrebird.so";
+
+	/**
+	 * Name under which versions before 1.0.5 extracted the pluggable transport
+	 * binary. Deleted on upgrade so it doesn't linger in the Tor directory.
+	 */
+	private static final String LEGACY_OBFS4_EXECUTABLE = "obfs4proxy";
 
 	private static final Logger LOG = getLogger(AndroidTorPlugin.class);
 
 	private final Context ctx;
 	private final AndroidWakeLock wakeLock;
-	private final File torLib, obfs4Lib;
+	private final File torLib, lyrebirdLib;
 
 	AndroidTorPlugin(Executor ioExecutor,
 			Context ctx,
@@ -86,7 +92,7 @@ public class AndroidTorPlugin extends AbstractTorPlugin {
 		wakeLock = wakeLockManager.createWakeLock("TorPlugin");
 		String nativeLibDir = ctx.getApplicationInfo().nativeLibraryDir;
 		torLib = new File(nativeLibDir, TOR_LIB_NAME);
-		obfs4Lib = new File(nativeLibDir, OBFS4_LIB_NAME);
+		lyrebirdLib = new File(nativeLibDir, LYREBIRD_LIB_NAME);
 	}
 
 	@Override
@@ -124,8 +130,9 @@ public class AndroidTorPlugin extends AbstractTorPlugin {
 	}
 
 	@Override
-	protected File getObfs4ExecutableFile() {
-		return obfs4Lib.exists() ? obfs4Lib : super.getObfs4ExecutableFile();
+	protected File getLyrebirdExecutableFile() {
+		return lyrebirdLib.exists() ? lyrebirdLib
+				: super.getLyrebirdExecutableFile();
 	}
 
 	@Override
@@ -147,20 +154,25 @@ public class AndroidTorPlugin extends AbstractTorPlugin {
 	}
 
 	@Override
-	protected void installObfs4Executable() throws IOException {
-		File extracted = super.getObfs4ExecutableFile();
-		if (obfs4Lib.exists()) {
-			// If an older version left behind an obfs4 binary, delete it
+	protected void installLyrebirdExecutable() throws IOException {
+		File extracted = super.getLyrebirdExecutableFile();
+		// An older version may have extracted obfs4proxy under its own name
+		File legacy = new File(extracted.getParentFile(),
+				LEGACY_OBFS4_EXECUTABLE);
+		//noinspection ResultOfMethodCallIgnored
+		legacy.delete();
+		if (lyrebirdLib.exists()) {
+			// If an older version left behind a lyrebird binary, delete it
 			if (extracted.exists()) {
 				if (extracted.delete()) LOG.info("");
 				else LOG.info("");
 			}
 		} else if (SDK_INT < 29) {
 			// The binary wasn't extracted at install time. Try to extract it
-			extractLibraryFromApk(OBFS4_LIB_NAME, extracted);
+			extractLibraryFromApk(LYREBIRD_LIB_NAME, extracted);
 		} else {
 			// No point extracting the binary, we won't be allowed to execute it
-			throw new FileNotFoundException(obfs4Lib.getAbsolutePath());
+			throw new FileNotFoundException(lyrebirdLib.getAbsolutePath());
 		}
 	}
 

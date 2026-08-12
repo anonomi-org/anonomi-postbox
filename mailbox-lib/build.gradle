@@ -25,7 +25,7 @@ dependencies {
     implementation "net.java.dev.jna:jna:$jna_version"
     implementation "net.java.dev.jna:jna-platform:$jna_version"
     tor "org.briarproject:tor-linux:$tor_version"
-    tor "org.briarproject:obfs4proxy-linux:$obfs4_version"
+    tor "org.briarproject:lyrebird-linux:$lyrebird_version"
 
     implementation "com.google.dagger:hilt-core:$hilt_version"
     kapt "com.google.dagger:hilt-compiler:$hilt_version"

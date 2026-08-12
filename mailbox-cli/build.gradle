@@ -72,7 +72,7 @@ void jarFactory(Jar jarTask, jarArchitecture) {
         String[] architectures = ["linux-aarch64", "linux-armhf", "linux-x86_64"]
         for (String arch : architectures) {
             if (arch != jarArchitecture) {
-                exclude "obfs4proxy_" + arch + ".zip"
+                exclude "lyrebird_" + arch + ".zip"
                 exclude "tor_" + arch + ".zip"
             }
         }

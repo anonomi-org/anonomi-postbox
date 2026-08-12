@@ -32,25 +32,33 @@ import javax.annotation.concurrent.Immutable;
 import javax.inject.Inject;
 
 import static java.util.Arrays.asList;
+import static java.util.Locale.US;
 import static java.util.Objects.requireNonNull;
 import static org.briarproject.mailbox.core.tor.CircumventionProvider.BridgeType.DEFAULT_OBFS4;
 import static org.briarproject.mailbox.core.tor.CircumventionProvider.BridgeType.MEEK;
 import static org.briarproject.mailbox.core.tor.CircumventionProvider.BridgeType.NON_DEFAULT_OBFS4;
+import static org.briarproject.mailbox.core.tor.CircumventionProvider.BridgeType.SNOWFLAKE;
 import static org.briarproject.mailbox.core.tor.CircumventionProvider.BridgeType.VANILLA;
 
 @Immutable
 class CircumventionProviderImpl implements CircumventionProvider {
 
-	private final static String BRIDGE_FILE_NAME = "bridges";
+	/**
+	 * Country code of the bridge lists used when we have nothing specific to
+	 * the user's country.
+	 */
+	private final static String DEFAULT_COUNTRY_CODE = "ZZ";
 
-	private static final Set<String> BRIDGE_COUNTRIES =
-			new HashSet<>(asList(BRIDGES));
-	private static final Set<String> DEFAULT_OBFS4_BRIDGE_COUNTRIES =
-			new HashSet<>(asList(DEFAULT_BRIDGES));
-	private static final Set<String> NON_DEFAULT_BRIDGE_COUNTRIES =
-			new HashSet<>(asList(NON_DEFAULT_BRIDGES));
-	private static final Set<String> DPI_COUNTRIES =
-			new HashSet<>(asList(DPI_BRIDGES));
+	private static final Set<String> USE_DEFAULT_OBFS4 =
+			new HashSet<>(asList(COUNTRIES_DEFAULT_OBFS4));
+	private static final Set<String> USE_NON_DEFAULT_OBFS4 =
+			new HashSet<>(asList(COUNTRIES_NON_DEFAULT_OBFS4));
+	private static final Set<String> USE_VANILLA =
+			new HashSet<>(asList(COUNTRIES_VANILLA));
+	private static final Set<String> USE_MEEK =
+			new HashSet<>(asList(COUNTRIES_MEEK));
+	private static final Set<String> USE_SNOWFLAKE =
+			new HashSet<>(asList(COUNTRIES_SNOWFLAKE));
 
 	@Inject
 	CircumventionProviderImpl() {
@@ -58,41 +66,54 @@ class CircumventionProviderImpl implements CircumventionProvider {
 
 	@Override
 	public boolean doBridgesWork(String countryCode) {
-		return BRIDGE_COUNTRIES.contains(countryCode);
+		return USE_DEFAULT_OBFS4.contains(countryCode) ||
+				USE_NON_DEFAULT_OBFS4.contains(countryCode) ||
+				USE_VANILLA.contains(countryCode) ||
+				USE_MEEK.contains(countryCode) ||
+				USE_SNOWFLAKE.contains(countryCode);
 	}
 
 	@Override
 	public List<BridgeType> getSuitableBridgeTypes(String countryCode) {
-		if (DEFAULT_OBFS4_BRIDGE_COUNTRIES.contains(countryCode)) {
-			return asList(DEFAULT_OBFS4, VANILLA);
-		} else if (NON_DEFAULT_BRIDGE_COUNTRIES.contains(countryCode)) {
-			return asList(NON_DEFAULT_OBFS4, VANILLA);
-		} else if (DPI_COUNTRIES.contains(countryCode)) {
-			return asList(NON_DEFAULT_OBFS4, MEEK);
-		} else {
-			return asList(DEFAULT_OBFS4, VANILLA);
+		List<BridgeType> types = new ArrayList<>();
+		if (USE_DEFAULT_OBFS4.contains(countryCode)) types.add(DEFAULT_OBFS4);
+		if (USE_NON_DEFAULT_OBFS4.contains(countryCode)) {
+			types.add(NON_DEFAULT_OBFS4);
 		}
+		if (USE_VANILLA.contains(countryCode)) types.add(VANILLA);
+		if (USE_MEEK.contains(countryCode)) types.add(MEEK);
+		if (USE_SNOWFLAKE.contains(countryCode)) types.add(SNOWFLAKE);
+		// If we have no recommendation for this country, use the defaults
+		if (types.isEmpty()) {
+			types.add(DEFAULT_OBFS4);
+			types.add(VANILLA);
+		}
+		return types;
 	}
 
 	@Override
 	@IoExecutor
-	public List<String> getBridges(BridgeType type) {
-		InputStream is = requireNonNull(getClass().getClassLoader()
-				.getResourceAsStream(BRIDGE_FILE_NAME));
-		Scanner scanner = new Scanner(is);
-
+	public List<String> getBridges(BridgeType type, String countryCode) {
+		ClassLoader cl = getClass().getClassLoader();
+		// Try to load bridges that are specific to this country code
+		InputStream is =
+				cl.getResourceAsStream(resourceName(type, countryCode));
+		if (is == null) {
+			// Nothing for this country, fall back to the generic list
+			is = requireNonNull(cl.getResourceAsStream(
+					resourceName(type, DEFAULT_COUNTRY_CODE)));
+		}
 		List<String> bridges = new ArrayList<>();
+		Scanner scanner = new Scanner(is);
 		while (scanner.hasNextLine()) {
-			String line = scanner.nextLine();
-			if ((type == DEFAULT_OBFS4 && line.startsWith("d ")) ||
-					(type == NON_DEFAULT_OBFS4 && line.startsWith("n ")) ||
-					(type == VANILLA && line.startsWith("v ")) ||
-					(type == MEEK && line.startsWith("m "))) {
-				bridges.add(line.substring(2));
-			}
+			bridges.add("Bridge " + scanner.nextLine());
 		}
 		scanner.close();
 		return bridges;
+	}
+
+	private String resourceName(BridgeType type, String countryCode) {
+		return "bridges-" + type.letter + "-" + countryCode.toLowerCase(US);
 	}
 
 }
