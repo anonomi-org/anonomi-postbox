@@ -120,6 +120,17 @@ android {
         warning 'MissingTranslation'
         warning 'ExtraTranslation'
     }
+
+    // F-Droid's Binaries: field resolves to one exact URL, so the release asset
+    // needs a stable name. This also drops AGP's "-unsigned" suffix, so
+    // release.yml checks signatures with apksigner rather than by filename.
+    applicationVariants.all { variant ->
+        if (variant.buildType.name == "release") {
+            variant.outputs.all { output ->
+                output.outputFileName = "anonomi-postbox-release.apk"
+            }
+        }
+    }
 }
 
 configurations {

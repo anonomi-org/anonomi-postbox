@@ -1,0 +1,25 @@
+Anonomi Postbox solves a real constraint of peer-to-peer messaging without reintroducing centralized control.
+
+Anonomi messages are exchanged directly between contacts. There are no servers, no accounts, no global infrastructure. That model maximizes privacy, but it also means delivery depends on both people being online at the same time. In hostile, mobile, or unstable environments, that assumption does not hold.
+
+Postbox extends reachability without betraying the threat model. It runs on a spare Android device you control -- at home, in an office, anywhere with power and a network -- and holds messages for your contacts until you come back online.
+
+It is not a platform. It is not a service. It is not a convenience layer owned by someone else. It is infrastructure you own.
+
+Features:
+
+* Store and forward -- Holds messages for your contacts while your phone is offline, and delivers them when it returns.
+* Reachable only over Tor -- Published as a Tor onion service. It has no public address, no open ports, and no inbound connection that does not come through Tor.
+* Censorship circumvention -- Bundles the lyrebird pluggable transport, with obfs4, meek and snowflake bridges used automatically where Tor is blocked.
+* Paired, not registered -- Linked to your Anonomi Messenger by scanning a QR code. There is no account and nothing to sign up for.
+* Runs on hardware you already have -- An old phone is enough.
+
+Philosophy:
+
+* No central authority -- A postbox you run yourself is not a server someone else can seize or subpoena.
+* Open and auditable -- Security through transparency, not marketing claims.
+* Honest about limits -- Your Postbox learns when it is contacted. It cannot read the messages it carries; they stay end-to-end encrypted between you and your contact.
+
+Anonomi Postbox is a companion to Anonomi Messenger and is not useful on its own.
+
+Privacy is a condition you defend, not a checkbox you enable.
