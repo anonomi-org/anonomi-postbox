@@ -6,13 +6,16 @@ import io.ktor.client.statement.bodyAsText
 import io.ktor.http.HttpStatusCode
 import io.mockk.every
 import io.mockk.mockk
+import org.briarproject.mailbox.core.contacts.BytesWrapper
 import org.briarproject.mailbox.core.contacts.Contact
+import org.briarproject.mailbox.core.contacts.ContactPostRequest
 import org.briarproject.mailbox.core.db.Transaction
 import org.briarproject.mailbox.core.db.TransactionManager
 import org.briarproject.mailbox.core.system.ID_SIZE
 import org.briarproject.mailbox.core.system.toHex
 import org.briarproject.mailbox.core.util.IoUtils
 import java.io.File
+import java.util.Base64
 import kotlin.random.Random
 import kotlin.test.assertEquals
 import kotlin.test.assertNotEquals
@@ -32,6 +35,24 @@ object TestUtils {
         token = getNewRandomId(),
         inboxId = getNewRandomId(),
         outboxId = getNewRandomId(),
+    )
+
+    /**
+     * The IDs are stored as hex, but the client sends them base64-encoded inside
+     * a "bytes" object, so requests need converting before they go on the wire.
+     */
+    fun String.hexToBase64(): String {
+        val bytes = ByteArray(length / 2) { i ->
+            substring(i * 2, i * 2 + 2).toInt(16).toByte()
+        }
+        return Base64.getEncoder().encodeToString(bytes)
+    }
+
+    fun Contact.toPostRequest() = ContactPostRequest(
+        contactId = contactId,
+        token = BytesWrapper(token.hexToBase64()),
+        inboxId = BytesWrapper(inboxId.hexToBase64()),
+        outboxId = BytesWrapper(outboxId.hexToBase64()),
     )
 
     /**

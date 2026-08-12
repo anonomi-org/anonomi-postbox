@@ -18,6 +18,7 @@ import kotlinx.coroutines.runBlocking
 import org.briarproject.mailbox.core.TestUtils.assertJson
 import org.briarproject.mailbox.core.TestUtils.assertTimestampRecent
 import org.briarproject.mailbox.core.TestUtils.getNewRandomContact
+import org.briarproject.mailbox.core.TestUtils.toPostRequest
 import org.briarproject.mailbox.core.server.IntegrationTest
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -114,7 +115,7 @@ class ContactsManagerIntegrationTest : IntegrationTest() {
         val response1: HttpResponse = httpClient.post("$baseUrl/contacts") {
             authenticateWithToken(ownerToken)
             contentType(ContentType.Application.Json)
-            setBody(c3)
+            setBody(c3.toPostRequest())
         }
         assertEquals(Created, response1.status)
 
@@ -140,7 +141,7 @@ class ContactsManagerIntegrationTest : IntegrationTest() {
         val response1: HttpResponse = httpClient.post("$baseUrl/contacts") {
             authenticateWithToken(contact1.token)
             contentType(ContentType.Application.Json)
-            setBody(getNewRandomContact(3))
+            setBody(getNewRandomContact(3).toPostRequest())
         }
         assertEquals(Unauthorized, response1.status)
 
@@ -201,7 +202,7 @@ class ContactsManagerIntegrationTest : IntegrationTest() {
         val response1: HttpResponse = httpClient.post("$baseUrl/contacts") {
             authenticateWithToken(ownerToken)
             contentType(ContentType.Application.Json)
-            setBody(getNewRandomContact(2))
+            setBody(getNewRandomContact(2).toPostRequest())
         }
         assertEquals(Conflict, response1.status)
 
