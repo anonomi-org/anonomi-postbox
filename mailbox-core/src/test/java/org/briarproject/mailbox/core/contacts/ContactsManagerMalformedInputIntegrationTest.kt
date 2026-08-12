@@ -12,6 +12,7 @@ import io.ktor.http.contentType
 import kotlinx.coroutines.runBlocking
 import org.briarproject.mailbox.core.TestUtils
 import org.briarproject.mailbox.core.TestUtils.getNewRandomContact
+import org.briarproject.mailbox.core.TestUtils.hexToBase64
 import org.briarproject.mailbox.core.server.IntegrationTest
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -44,9 +45,9 @@ class ContactsManagerMalformedInputIntegrationTest : IntegrationTest(false) {
             setBody(
                 """{
                 "contactId": ${c3.contactId},
-                "token": "${c3.token}",
-                "inboxId": "${c3.inboxId}",
-                "outboxId": "${c3.outboxId}"
+                "token": { "bytes": "${c3.token.hexToBase64()}" },
+                "inboxId": { "bytes": "${c3.inboxId.hexToBase64()}" },
+                "outboxId": { "bytes": "${c3.outboxId.hexToBase64()}" }
                 }""".trimMargin()
             )
         }
