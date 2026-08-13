@@ -478,7 +478,7 @@ public abstract class AbstractTorPlugin
 
 	private void enableBridges(List<BridgeType> bridgeTypes, String country)
 			throws IOException {
-		if (!state.setBridgeTypes(bridgeTypes)) return; // Unchanged
+		if (!state.setBridgeTypes(bridgeTypes, country)) return; // Unchanged
 		if (bridgeTypes.isEmpty()) {
 			controlConnection.setConf("UseBridges", "0");
 			controlConnection.resetConf(singletonList("Bridge"));
@@ -732,6 +732,9 @@ public abstract class AbstractTorPlugin
 		@GuardedBy("this")
 		private List<BridgeType> bridgeTypes = emptyList();
 
+		@GuardedBy("this")
+		private String bridgeCountry = "";
+
 		synchronized void setStarted() {
 			started = true;
 			state.setValue(getCurrentState());
@@ -815,13 +818,19 @@ public abstract class AbstractTorPlugin
 		}
 
 		/**
-		 * Sets the list of bridge types being used and returns true if the
-		 * list has changed. The list is empty if bridges are disabled.
-		 * Doesn't affect getState().
+		 * Sets the list of bridge types being used and the country they were
+		 * chosen for, and returns true if either has changed. The bridges for
+		 * a given type differ per country, so the country is part of the key.
+		 * The list is empty if bridges are disabled. Doesn't affect
+		 * getState().
 		 */
-		private synchronized boolean setBridgeTypes(List<BridgeType> types) {
-			if (types.equals(bridgeTypes)) return false; // Unchanged
+		private synchronized boolean setBridgeTypes(List<BridgeType> types,
+				String country) {
+			if (types.equals(bridgeTypes) && country.equals(bridgeCountry)) {
+				return false; // Unchanged
+			}
 			bridgeTypes = types;
+			bridgeCountry = country;
 			return true; // Changed
 		}
 
