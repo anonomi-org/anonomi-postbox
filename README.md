@@ -236,12 +236,7 @@ See [CONTRIBUTING.md](./CONTRIBUTING.md)
 For security-related matters, responsible disclosure, or project coordination,
 you can contact the Anonomi maintainers at:
 
-**anonomi@protonmail.com**
-
-Proton Mail access:
-- Clearnet: https://proton.me
-- Tor (official Proton Mail Tor entry):
-  https://protonmailrmez3lotccipshtkleegetolb73fuirgj7r4o4vfu7ozyd.onion/
+**hello@anonomi.org**
 
 Please avoid sharing sensitive operational details unless strictly necessary,
 and prefer encrypted communication when appropriate.
