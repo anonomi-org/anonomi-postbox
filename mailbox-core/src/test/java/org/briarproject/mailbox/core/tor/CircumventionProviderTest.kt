@@ -115,8 +115,8 @@ class CircumventionProviderTest {
     }
 
     /**
-     * Why [AbstractTorPlugin] keys its "unchanged" check on the country too:
-     * these countries ask for the same types but need different bridges.
+     * Why a bridge set can't be identified by its types: these countries ask
+     * for the same types but need different bridges.
      */
     @Test
     fun `countries sharing a type list still need different bridges`() {

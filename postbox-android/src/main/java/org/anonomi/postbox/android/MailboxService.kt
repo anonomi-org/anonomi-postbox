@@ -35,13 +35,13 @@ import org.anonomi.postbox.android.ui.StartupFailureActivity
 import org.anonomi.postbox.android.ui.StartupFailureActivity.Companion.EXTRA_START_RESULT
 import org.anonomi.postbox.android.ui.StartupFailureActivity.StartupFailure
 import org.anonomi.postbox.android.ui.WipeCompleteActivity
+import org.briarproject.android.dontkillmelib.wakelock.AndroidWakeLock
+import org.briarproject.android.dontkillmelib.wakelock.AndroidWakeLockManager
 import org.briarproject.mailbox.core.lifecycle.LifecycleManager
 import org.briarproject.mailbox.core.lifecycle.LifecycleManager.StartResult.LIFECYCLE_REUSE
 import org.briarproject.mailbox.core.lifecycle.LifecycleManager.StartResult.SERVICE_ERROR
 import org.briarproject.mailbox.core.lifecycle.LifecycleManager.StartResult.SUCCESS
 import org.briarproject.mailbox.core.system.AndroidExecutor
-import org.briarproject.mailbox.core.system.AndroidWakeLock
-import org.briarproject.mailbox.core.system.AndroidWakeLockManager
 import org.briarproject.mailbox.core.system.System
 import org.slf4j.LoggerFactory.getLogger
 import java.util.concurrent.atomic.AtomicBoolean

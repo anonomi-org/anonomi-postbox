@@ -24,7 +24,9 @@ dependencies {
     implementation "com.google.dagger:hilt-core:$hilt_version"
     kapt "com.google.dagger:dagger-compiler:$hilt_version"
 
-    implementation 'org.briarproject:jtorctl:0.5'
+    // Talking to Tor's control port is onionwrapper's job now, so jtorctl is
+    // no longer declared here. It still reaches this module's classpath as an
+    // api dependency of onionwrapper-core.
     api "org.briarproject:onionwrapper-core:$onionwrapper_version"
 
     def ktor_version = '2.2.3'

@@ -24,20 +24,20 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import org.briarproject.mailbox.core.event.EventBus
+import org.briarproject.mailbox.core.event.EventExecutor
 import org.briarproject.mailbox.core.files.FileProvider
 import org.briarproject.mailbox.core.lifecycle.IoExecutor
 import org.briarproject.mailbox.core.lifecycle.LifecycleManager
 import org.briarproject.mailbox.core.server.WebServerManager
 import org.briarproject.mailbox.core.settings.SettingsManager
-import org.briarproject.mailbox.core.system.Clock
-import org.briarproject.mailbox.core.system.LocationUtils
-import org.briarproject.mailbox.core.system.ResourceProvider
+import org.briarproject.mailbox.core.tor.TorConstants.CONTROL_PORT
+import org.briarproject.mailbox.core.tor.TorConstants.SOCKS_PORT
 import org.briarproject.mailbox.core.util.OsUtils.isLinux
 import org.briarproject.onionwrapper.CircumventionProvider
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory.getLogger
+import org.briarproject.onionwrapper.JavaLocationUtilsFactory.createJavaLocationUtils
+import org.briarproject.onionwrapper.LocationUtils
+import org.briarproject.onionwrapper.UnixTorWrapper
 import java.io.File
-import java.util.Locale
 import java.util.concurrent.Executor
 import javax.inject.Singleton
 
@@ -45,26 +45,14 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 class JavaTorModule {
 
-    companion object {
-        private val LOG: Logger = getLogger(JavaTorModule::class.java)
-    }
-
-    @Provides
-    @Singleton
-    fun provideResourceProvider() = ResourceProvider { name, extension ->
-        val cl = javaClass.classLoader
-        cl.getResourceAsStream(name + extension)
-    }
-
     @Provides
     @Singleton
     fun provideJavaTorPlugin(
         @IoExecutor ioExecutor: Executor,
+        @EventExecutor eventExecutor: Executor,
         settingsManager: SettingsManager,
         networkManager: NetworkManager,
         locationUtils: LocationUtils,
-        clock: Clock,
-        resourceProvider: ResourceProvider,
         circumventionProvider: CircumventionProvider,
         lifecycleManager: LifecycleManager,
         eventBus: EventBus,
@@ -72,41 +60,44 @@ class JavaTorModule {
         webServerManager: WebServerManager,
     ): TorPlugin {
         val torDir = File(fileProvider.root, "tor")
-        return JavaTorPlugin(
+        val architecture = this.architecture
+        val tor = UnixTorWrapper(
+            ioExecutor,
+            eventExecutor,
+            architecture.orEmpty(),
+            torDir,
+            SOCKS_PORT,
+            CONTROL_PORT
+        )
+        return TorPluginImpl(
             ioExecutor,
             settingsManager,
             networkManager,
             locationUtils,
-            clock,
-            resourceProvider,
             circumventionProvider,
-            architecture,
-            torDir
+            tor,
+            architecture
         ) { webServerManager.port }.also {
             lifecycleManager.registerService(it)
             eventBus.addListener(it)
         }
     }
 
+    /**
+     * The directory the Tor and lyrebird binaries are unpacked into, which is
+     * also how onionwrapper addresses them on the classpath. These are the
+     * names tor-linux and lyrebird-linux ship, not the ones Java reports.
+     */
     private val architecture: String?
         get() {
             if (isLinux()) {
-                if (LOG.isInfoEnabled) {
-                    // LOG.info("System's os.arch is ${System.getProperty("os.arch")}")
-                }
                 when (System.getProperty("os.arch")) {
-                    "amd64" -> {
-                        return "linux-x86_64"
-                    }
-                    "aarch64" -> {
-                        return "linux-aarch64"
-                    }
-                    "arm" -> {
-                        return "linux-armhf"
-                    }
+                    "amd64" -> return "x86_64"
+                    "aarch64" -> return "aarch64"
+                    "arm" -> return "armhf"
                 }
             }
-            // LOG.info("Tor is not supported on this architecture")
+            // Tor is not supported on this architecture
             return null
         }
 
@@ -118,6 +109,6 @@ class JavaTorModule {
 
     @Provides
     @Singleton
-    fun provideLocationUtils() = LocationUtils { Locale.getDefault().country }
+    fun provideLocationUtils(): LocationUtils = createJavaLocationUtils()
 
 }

@@ -69,11 +69,12 @@ void jarFactory(Jar jarTask, jarArchitecture) {
         }
     } { copySpec ->
         copySpec.duplicatesStrategy(DuplicatesStrategy.EXCLUDE)
-        String[] architectures = ["linux-aarch64", "linux-armhf", "linux-x86_64"]
+        // tor-linux and lyrebird-linux ship the binaries in a directory per
+        // architecture, so the ones this jar is not for go by directory name
+        String[] architectures = ["aarch64", "armhf", "x86_64"]
         for (String arch : architectures) {
-            if (arch != jarArchitecture) {
-                exclude "lyrebird_" + arch + ".zip"
-                exclude "tor_" + arch + ".zip"
+            if (!jarArchitecture.endsWith(arch)) {
+                exclude arch + "/*"
             }
         }
         exclude 'META-INF/*.SF', 'META-INF/*.DSA', 'META-INF/*.RSA'

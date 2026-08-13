@@ -19,26 +19,28 @@
 
 package org.briarproject.mailbox.core.tor
 
-import android.annotation.SuppressLint
+import android.app.Application
 import android.content.Context
-import android.content.res.Resources
+import android.os.Build
+import android.os.Build.VERSION.SDK_INT
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import org.briarproject.android.dontkillmelib.wakelock.AndroidWakeLockManager
 import org.briarproject.mailbox.core.event.EventBus
+import org.briarproject.mailbox.core.event.EventExecutor
 import org.briarproject.mailbox.core.lifecycle.IoExecutor
 import org.briarproject.mailbox.core.lifecycle.LifecycleManager
 import org.briarproject.mailbox.core.server.WebServerManager
 import org.briarproject.mailbox.core.settings.SettingsManager
-import org.briarproject.mailbox.core.system.AndroidWakeLockManager
-import org.briarproject.mailbox.core.system.Clock
-import org.briarproject.mailbox.core.system.LocationUtils
-import org.briarproject.mailbox.core.system.ResourceProvider
+import org.briarproject.mailbox.core.tor.TorConstants.CONTROL_PORT
+import org.briarproject.mailbox.core.tor.TorConstants.SOCKS_PORT
+import org.briarproject.onionwrapper.AndroidLocationUtilsFactory.createAndroidLocationUtils
+import org.briarproject.onionwrapper.AndroidTorWrapper
 import org.briarproject.onionwrapper.CircumventionProvider
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory.getLogger
+import org.briarproject.onionwrapper.LocationUtils
+import java.io.File
 import java.util.concurrent.Executor
 import javax.inject.Singleton
 
@@ -47,72 +49,85 @@ import javax.inject.Singleton
 internal class AndroidTorModule {
 
     companion object {
-        private val LOG: Logger = getLogger(AndroidTorModule::class.java)
-    }
-
-    @Provides
-    @Singleton
-    fun provideResourceProvider(@ApplicationContext ctx: Context): ResourceProvider {
-        return ResourceProvider { name, _ ->
-            val res: Resources = ctx.resources
-            // extension is ignored on Android, resources are retrieved without it
-            @SuppressLint("DiscouragedApi") // we really want this API, don't know name before
-            val resId = res.getIdentifier(name, "raw", ctx.packageName)
-            res.openRawResource(resId)
-        }
+        private const val LEGACY_OBFS4_EXECUTABLE = "obfs4proxy"
     }
 
     @Provides
     @Singleton
     fun provideAndroidTorPlugin(
-        @ApplicationContext app: Context,
+        app: Application,
         @IoExecutor ioExecutor: Executor,
+        @EventExecutor eventExecutor: Executor,
         settingsManager: SettingsManager,
         networkManager: NetworkManager,
         locationUtils: LocationUtils,
-        clock: Clock,
-        resourceProvider: ResourceProvider,
         circumventionProvider: CircumventionProvider,
-        androidWakeLockManager: AndroidWakeLockManager,
+        wakeLockManager: AndroidWakeLockManager,
         lifecycleManager: LifecycleManager,
         eventBus: EventBus,
         webServerManager: WebServerManager,
-    ): TorPlugin = AndroidTorPlugin(
-        ioExecutor,
-        app,
-        settingsManager,
-        networkManager,
-        locationUtils,
-        clock,
-        resourceProvider,
-        circumventionProvider,
-        androidWakeLockManager,
-        architecture,
-        app.getDir("tor", Context.MODE_PRIVATE)
-    ) { webServerManager.port }.also {
-        lifecycleManager.registerService(it)
-        eventBus.addListener(it)
+    ): TorPlugin {
+        val architecture = this.architecture
+        val torDir = app.getDir("tor", Context.MODE_PRIVATE)
+        // Versions before 1.0.5 extracted the pluggable transport under its
+        // own name. The wrapper only removes the one it installs itself, so
+        // without this the old binary stays behind on upgrade.
+        File(torDir, LEGACY_OBFS4_EXECUTABLE).delete()
+        val tor = AndroidTorWrapper(
+            app,
+            wakeLockManager,
+            ioExecutor,
+            eventExecutor,
+            architecture.orEmpty(),
+            torDir,
+            SOCKS_PORT,
+            CONTROL_PORT
+        )
+        return TorPluginImpl(
+            ioExecutor,
+            settingsManager,
+            networkManager,
+            locationUtils,
+            circumventionProvider,
+            tor,
+            architecture
+        ) { webServerManager.port }.also {
+            lifecycleManager.registerService(it)
+            eventBus.addListener(it)
+        }
     }
 
+    /**
+     * Null if we ship no Tor binary for this device. The wrapper runs the
+     * binary out of the native library directory, so the name is only used to
+     * decide whether to start Tor at all.
+     */
     private val architecture: String?
         get() {
-            for (abi in AndroidTorPlugin.getSupportedArchitectures()) {
+            for (abi in supportedArchitectures) {
                 return when {
-                    abi.startsWith("x86_64") -> "x86_64_pie"
-                    abi.startsWith("x86") -> "x86_pie"
-                    abi.startsWith("arm64") -> "arm64_pie"
-                    abi.startsWith("armeabi") -> "arm_pie"
+                    abi.startsWith("x86_64") -> "x86_64"
+                    abi.startsWith("x86") -> "x86"
+                    abi.startsWith("arm64") -> "arm64"
+                    abi.startsWith("armeabi") -> "arm"
                     else -> continue
                 }
             }
-            // LOG.info("Tor is not supported on this architecture")
             return null
         }
 
+    private val supportedArchitectures: List<String>
+        get() = if (SDK_INT >= 21) {
+            Build.SUPPORTED_ABIS.toList()
+        } else {
+            @Suppress("DEPRECATION")
+            listOfNotNull(Build.CPU_ABI, Build.CPU_ABI2)
+        }
+
     @Provides
-    fun provideLocationUtils(locationUtils: AndroidLocationUtils): LocationUtils {
-        return locationUtils
-    }
+    @Singleton
+    fun provideLocationUtils(app: Application): LocationUtils =
+        createAndroidLocationUtils(app)
 
     @Provides
     @Singleton
