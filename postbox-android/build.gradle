@@ -229,14 +229,17 @@ tasks.withType(MergeResources) {
     dependsOn unpackTorBinaries
 }
 
-// Copy release APK to Anonomi assets
+// Goes to src/official/assets, not src/main: only the official flavour bundles
+// companion APKs, so src/main would reach the fdroid build too. AGP keeps the
+// -unsigned suffix on unsigned output, so excluding it here is enough.
 tasks.register("copyApkToAnonomiAssets", Copy) {
     dependsOn("assembleRelease")
     from("$buildDir/outputs/apk/release") {
         include("*.apk")
+        exclude("*-unsigned.apk")
         rename { "anonomi-postbox.apk" }
     }
-    into("$rootDir/../anonomi-android/src/main/assets/")
+    into("$rootDir/../anonomi-android/src/official/assets/")
 }
 
 apply from: "../gradle/ktlint.gradle"
