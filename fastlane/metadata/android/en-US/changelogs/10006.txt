@@ -1,0 +1,5 @@
+Version 1.0.6:
+* Hardened how the mailbox accepts connections
+* Request logs no longer record the identifiers that address a folder or a file
+* App data is excluded from cloud backups and from device-to-device transfers
+* The pairing QR code and link can no longer be captured by screenshots
