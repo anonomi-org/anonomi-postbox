@@ -1,0 +1,70 @@
+# Builds the app, runs the unit tests and enforces the linters on every pull
+# request. Nothing else looks at a pull request here: release.yml only fires on
+# a tag, so without this a change reaches main unchecked.
+#
+# JDK 17 on purpose. kapt does not survive JDK 21 on this Gradle/AGP pair, and
+# release.yml already pins 17 -- CI and release should compile the same way.
+#
+# Dependency verification is enforced by gradle/verification-metadata.xml, so an
+# artifact that is not listed there fails the build. That is deliberate: adding a
+# dependency is expected to come with its checksum in the same commit.
+name: Build and test
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+# A new push supersedes whatever was already running for the same ref.
+concurrency:
+  group: build-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Cache Gradle
+        uses: gradle/actions/setup-gradle@v3
+
+      - name: Test
+        run: ./gradlew test --stacktrace
+
+      - name: Lint
+        run: ./gradlew ktlintCheck checkstyleMain --stacktrace
+
+      # Debug is minified here too, so it exercises R8 the same way release does.
+      # Release is built anyway because it is the artifact that ships; it comes
+      # out unsigned without the keystore, which is release.yml's job, not this
+      # workflow's.
+      - name: Build
+        run: |
+          ./gradlew :postbox-android:assembleDebug \
+                    :postbox-android:assembleRelease --stacktrace
+
+      # Only on failure: the HTML reports say which test broke and why, which
+      # the log alone does not.
+      - name: Upload test reports
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-reports
+          path: "*/build/reports/**"
+          retention-days: 7

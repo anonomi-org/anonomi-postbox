@@ -1,6 +1,5 @@
 package org.briarproject.mailbox.lib
 
-import org.briarproject.mailbox.core.util.LogUtils.info
 import org.briarproject.mailbox.system.TestSystem
 import java.io.File
 import javax.inject.Inject

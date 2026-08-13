@@ -52,7 +52,6 @@ import org.briarproject.mailbox.core.system.AndroidExecutor
 import org.briarproject.mailbox.core.tor.NetworkStatusEvent
 import org.briarproject.mailbox.core.tor.TorPlugin
 import org.briarproject.mailbox.core.tor.TorState
-import org.briarproject.mailbox.core.util.LogUtils.info
 import org.slf4j.LoggerFactory
 import java.util.concurrent.atomic.AtomicReference
 import javax.inject.Inject

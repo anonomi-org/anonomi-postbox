@@ -28,7 +28,6 @@ import dagger.hilt.android.AndroidEntryPoint
 import org.briarproject.mailbox.core.lifecycle.LifecycleManager
 import org.briarproject.mailbox.core.lifecycle.LifecycleManager.LifecycleState.NOT_STARTED
 import org.briarproject.mailbox.core.setup.SetupManager
-import org.briarproject.mailbox.core.util.LogUtils.debug
 import org.slf4j.LoggerFactory.getLogger
 import javax.inject.Inject
 

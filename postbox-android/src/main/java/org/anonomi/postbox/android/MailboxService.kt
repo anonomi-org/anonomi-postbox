@@ -43,7 +43,6 @@ import org.briarproject.mailbox.core.system.AndroidExecutor
 import org.briarproject.mailbox.core.system.AndroidWakeLock
 import org.briarproject.mailbox.core.system.AndroidWakeLockManager
 import org.briarproject.mailbox.core.system.System
-import org.briarproject.mailbox.core.util.LogUtils.warn
 import org.slf4j.LoggerFactory.getLogger
 import java.util.concurrent.atomic.AtomicBoolean
 import javax.inject.Inject
