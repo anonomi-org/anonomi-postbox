@@ -4,6 +4,7 @@ ext {
     nav_version = '2.5.3'
     tor_version = '0.4.9.11'
     lyrebird_version = '0.6.2'
+    onionwrapper_version = '0.1.6'
     junit_version = '5.7.2'
     mockk_version = '1.10.4'
     ktlint_plugin_version = '10.2.1'

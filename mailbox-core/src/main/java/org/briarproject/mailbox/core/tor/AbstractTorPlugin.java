@@ -34,7 +34,8 @@ import org.briarproject.mailbox.core.settings.SettingsManager;
 import org.briarproject.mailbox.core.system.Clock;
 import org.briarproject.mailbox.core.system.LocationUtils;
 import org.briarproject.mailbox.core.system.ResourceProvider;
-import org.briarproject.mailbox.core.tor.CircumventionProvider.BridgeType;
+import org.briarproject.onionwrapper.CircumventionProvider;
+import org.briarproject.onionwrapper.CircumventionProvider.BridgeType;
 import org.slf4j.Logger;
 
 import java.io.ByteArrayInputStream;
@@ -73,7 +74,7 @@ import static java.util.Collections.singletonMap;
 import static kotlinx.coroutines.flow.StateFlowKt.MutableStateFlow;
 import static net.freehaven.tor.control.TorControlCommands.HS_ADDRESS;
 import static net.freehaven.tor.control.TorControlCommands.HS_PRIVKEY;
-import static org.briarproject.mailbox.core.tor.CircumventionProvider.BridgeType.MEEK;
+import static org.briarproject.onionwrapper.CircumventionProvider.BridgeType.MEEK;
 import static org.briarproject.mailbox.core.tor.TorConstants.CONTROL_PORT;
 import static org.briarproject.mailbox.core.tor.TorConstants.HS_ADDRESS_V3;
 import static org.briarproject.mailbox.core.tor.TorConstants.HS_PRIVATE_KEY_V3;
@@ -638,7 +639,8 @@ public abstract class AbstractTorPlugin
 			boolean wifi = status.isWifi();
 			boolean ipv6Only = status.isIpv6Only();
 			String country = locationUtils.getCurrentCountry();
-			boolean bridgesWork = circumventionProvider.doBridgesWork(country);
+			boolean bridgesWork =
+					circumventionProvider.shouldUseBridges(country);
 
 			// if (LOG.isInfoEnabled()) {
 			//	LOG.info("Online: " + online + ", wifi: " + wifi

@@ -21,9 +21,12 @@ configurations {
 dependencies {
     implementation project(path: ':mailbox-core', configuration: 'default')
 
-    def jna_version = '5.8.0'
+    // Matches the version onionwrapper-java pulls in, so the resolved version
+    // is declared here rather than arrived at by conflict resolution.
+    def jna_version = '5.13.0'
     implementation "net.java.dev.jna:jna:$jna_version"
     implementation "net.java.dev.jna:jna-platform:$jna_version"
+    implementation "org.briarproject:onionwrapper-java:$onionwrapper_version"
     tor "org.briarproject:tor-linux:$tor_version"
     tor "org.briarproject:lyrebird-linux:$lyrebird_version"
 

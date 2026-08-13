@@ -31,6 +31,7 @@ import org.briarproject.mailbox.core.system.AndroidWakeLockManager;
 import org.briarproject.mailbox.core.system.Clock;
 import org.briarproject.mailbox.core.system.LocationUtils;
 import org.briarproject.mailbox.core.system.ResourceProvider;
+import org.briarproject.onionwrapper.CircumventionProvider;
 import org.slf4j.Logger;
 
 import java.io.File;
