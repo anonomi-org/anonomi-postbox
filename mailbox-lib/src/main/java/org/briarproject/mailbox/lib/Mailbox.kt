@@ -1,6 +1,5 @@
 package org.briarproject.mailbox.lib
 
-import org.briarproject.mailbox.core.util.LogUtils.info
 import java.io.File
 
 class Mailbox(mailboxDir: File? = null) : AbstractMailbox(mailboxDir) {

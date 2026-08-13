@@ -53,7 +53,6 @@ import org.anonomi.postbox.android.StatusManager.Stopping
 import org.anonomi.postbox.android.StatusManager.Undecided
 import org.anonomi.postbox.android.StatusManager.Wiping
 import org.briarproject.mailbox.core.lifecycle.LifecycleManager.LifecycleState.NOT_STARTED
-import org.briarproject.mailbox.core.util.LogUtils.info
 import org.slf4j.LoggerFactory.getLogger
 
 @AndroidEntryPoint

@@ -28,7 +28,6 @@ import org.briarproject.mailbox.core.db.DatabaseConfig
 import org.briarproject.mailbox.core.event.DefaultEventExecutorModule
 import org.briarproject.mailbox.core.files.FileProvider
 import org.briarproject.mailbox.core.system.DefaultTaskSchedulerModule
-import org.briarproject.mailbox.core.util.LogUtils.info
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory.getLogger
 import java.io.File
@@ -90,7 +89,7 @@ open class MailboxLibModule(private val customDataDir: File? = null) {
         perms.add(OWNER_EXECUTE)
         setPosixFilePermissions(dataDir.toPath(), perms)
 
-       // LOG.info { "Datadir set to: ${dataDir.absolutePath}" }
+        // LOG.info { "Datadir set to: ${dataDir.absolutePath}" }
         dataDir
     }
 

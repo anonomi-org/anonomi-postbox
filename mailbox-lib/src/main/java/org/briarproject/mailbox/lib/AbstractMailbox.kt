@@ -33,7 +33,6 @@ import org.briarproject.mailbox.core.setup.WipeManager
 import org.briarproject.mailbox.core.system.System
 import org.briarproject.mailbox.core.tor.TorPlugin
 import org.briarproject.mailbox.core.tor.TorState
-import org.briarproject.mailbox.core.util.LogUtils.info
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory.getLogger
 import java.io.File

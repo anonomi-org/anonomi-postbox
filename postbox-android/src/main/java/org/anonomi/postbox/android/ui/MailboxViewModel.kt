@@ -37,7 +37,6 @@ import org.briarproject.mailbox.core.lifecycle.LifecycleManager.LifecycleState
 import org.briarproject.mailbox.core.settings.MetadataManager
 import org.briarproject.mailbox.core.system.AndroidExecutor
 import org.briarproject.mailbox.core.system.DozeWatchdog
-import org.briarproject.mailbox.core.util.LogUtils.info
 import org.slf4j.LoggerFactory.getLogger
 import javax.inject.Inject
 
