@@ -37,7 +37,7 @@ private val LOG = getLogger(BearerAuthenticationProvider::class.java)
 internal class BearerAuthenticationProvider constructor(config: Config) :
     AuthenticationProvider(config) {
 
-    internal val realm: String = "Briar Mailbox"
+    internal val realm: String = "mailbox"
     internal val authHeader: (ApplicationCall) -> HttpAuthHeader? = { call ->
         try {
             call.request.parseAuthorizationHeader()

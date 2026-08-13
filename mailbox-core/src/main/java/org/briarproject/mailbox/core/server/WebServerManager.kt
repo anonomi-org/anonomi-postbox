@@ -27,6 +27,8 @@ import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.Netty
 import io.ktor.server.plugins.callloging.CallLogging
 import io.ktor.server.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.server.request.httpMethod
+import io.ktor.server.request.path
 import kotlinx.coroutines.runBlocking
 import org.briarproject.mailbox.core.contacts.ContactsManager
 import org.briarproject.mailbox.core.files.FileRouteManager
@@ -34,8 +36,14 @@ import org.briarproject.mailbox.core.lifecycle.Service
 import org.briarproject.mailbox.core.settings.MetadataRouteManager
 import org.briarproject.mailbox.core.setup.SetupRouteManager
 import org.briarproject.mailbox.core.setup.WipeRouteManager
+import org.briarproject.mailbox.core.system.ID_REGEX
 import javax.inject.Inject
 import javax.inject.Singleton
+
+/**
+ * Tor connects over loopback, so the API does not need to be reachable anywhere else.
+ */
+private const val HOST = "127.0.0.1"
 
 interface WebServerManager : Service {
     /**
@@ -55,8 +63,15 @@ internal class WebServerManagerImpl @Inject constructor(
 ) : WebServerManager {
 
     private val server by lazy {
-        embeddedServer(Netty, 0, watchPaths = emptyList()) {
-            install(CallLogging)
+        embeddedServer(Netty, port = 0, host = HOST, watchPaths = emptyList()) {
+            install(CallLogging) {
+                format { call ->
+                    val status = call.response.status() ?: "Unhandled"
+                    // A path names the folder or file it grants access to
+                    val path = ID_REGEX.replace(call.request.path(), "<id>")
+                    "$status: ${call.request.httpMethod.value} - $path"
+                }
+            }
             install(Authentication) {
                 bearer {
                     authenticationFunction = { token ->

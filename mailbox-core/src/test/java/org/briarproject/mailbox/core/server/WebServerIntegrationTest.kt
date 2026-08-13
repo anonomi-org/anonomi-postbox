@@ -22,10 +22,32 @@ import io.ktor.server.response.respond
 import io.ktor.server.routing.post
 import io.ktor.server.routing.routing
 import kotlinx.coroutines.runBlocking
+import org.junit.jupiter.api.Assumptions.assumeTrue
 import org.junit.jupiter.api.Test
+import java.io.IOException
+import java.net.Inet4Address
+import java.net.InetSocketAddress
+import java.net.NetworkInterface
+import java.net.Socket
 import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
 
 class WebServerIntegrationTest : IntegrationTest() {
+
+    @Test
+    fun serverDoesNotListenOffLoopback() {
+        val port = testComponent.getWebServerManager().port
+        val addresses = NetworkInterface.getNetworkInterfaces().toList()
+            .filter { it.isUp && !it.isLoopback }
+            .flatMap { it.inetAddresses.toList() }
+            .filterIsInstance<Inet4Address>()
+        assumeTrue(addresses.isNotEmpty(), "no non-loopback address to try")
+        addresses.forEach { address ->
+            assertFailsWith<IOException> {
+                Socket().use { it.connect(InetSocketAddress(address, port), 1_000) }
+            }
+        }
+    }
 
     @Test
     fun routeRespondsWithTeapot(): Unit = runBlocking {

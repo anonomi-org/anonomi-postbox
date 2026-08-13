@@ -17,4 +17,14 @@ class RandomIdManagerTest {
         }
     }
 
+    @Test
+    fun `generated IDs are replaced wherever they appear in a path`() {
+        val folderId = randomIdManager.getNewRandomId()
+        val fileId = randomIdManager.getNewRandomId()
+        assertEquals(
+            "/files/<id>/<id>",
+            ID_REGEX.replace("/files/$folderId/$fileId", "<id>")
+        )
+    }
+
 }
