@@ -21,6 +21,7 @@ package org.anonomi.postbox.android.ui
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.WindowManager.LayoutParams.FLAG_SECURE
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -38,6 +39,7 @@ import org.anonomi.postbox.NavMainDirections.actionGlobalStartupFragment
 import org.anonomi.postbox.NavMainDirections.actionGlobalStatusFragment
 import org.anonomi.postbox.NavMainDirections.actionGlobalStoppingFragment
 import org.anonomi.postbox.NavMainDirections.actionGlobalWipingFragment
+import org.anonomi.postbox.BuildConfig
 import org.anonomi.postbox.R
 import org.anonomi.postbox.android.StatusManager.ErrorClockSkew
 import org.anonomi.postbox.android.StatusManager.ErrorNoNetwork
@@ -75,6 +77,9 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        // The link screens show pairing credentials. Debug builds stay capturable
+        // so screenshots can still be taken for the listing.
+        if (!BuildConfig.DEBUG) window.addFlags(FLAG_SECURE)
         // LOG.info("onCreate()")
         setContentView(R.layout.activity_main)
 
