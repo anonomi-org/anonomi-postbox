@@ -15,7 +15,7 @@ If you discover a **security or privacy vulnerability**, please report it **resp
 
 Please report vulnerabilities via email:
 
-**anonomi@protonmail.com**
+**security@anonomi.org**
 
 - You may use PGP if needed
 - You do not need a GitHub account
