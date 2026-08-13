@@ -26,6 +26,7 @@ import org.briarproject.mailbox.core.settings.SettingsManager;
 import org.briarproject.mailbox.core.system.Clock;
 import org.briarproject.mailbox.core.system.LocationUtils;
 import org.briarproject.mailbox.core.system.ResourceProvider;
+import org.briarproject.onionwrapper.CircumventionProvider;
 
 import java.io.File;
 import java.net.URI;

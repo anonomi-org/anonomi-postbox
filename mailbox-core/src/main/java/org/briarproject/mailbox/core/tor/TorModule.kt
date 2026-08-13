@@ -24,6 +24,8 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import org.briarproject.mailbox.core.lifecycle.IoExecutor
+import org.briarproject.onionwrapper.CircumventionProvider
+import org.briarproject.onionwrapper.CircumventionProviderFactory
 import java.util.concurrent.Executor
 import java.util.concurrent.SynchronousQueue
 import java.util.concurrent.ThreadPoolExecutor
@@ -37,8 +39,8 @@ internal class TorModule {
 
     @Provides
     @Singleton
-    fun provideCircumventionProvider(provider: CircumventionProviderImpl): CircumventionProvider {
-        return provider
+    fun provideCircumventionProvider(): CircumventionProvider {
+        return CircumventionProviderFactory.createCircumventionProvider()
     }
 
     @Provides
