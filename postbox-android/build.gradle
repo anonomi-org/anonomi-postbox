@@ -12,6 +12,8 @@ import com.android.build.gradle.tasks.MergeResources
 import java.util.Properties
 import java.io.FileInputStream
 
+def releaseApkName = "anonomi-postbox-release.apk"
+
 def keystoreProps = new Properties()
 def keystoreFile = rootProject.file("keystore.properties")
 if (keystoreFile.exists()) {
@@ -122,12 +124,12 @@ android {
     }
 
     // F-Droid's Binaries: field resolves to one exact URL, so the release asset
-    // needs a stable name. This also drops AGP's "-unsigned" suffix, so
-    // release.yml checks signatures with apksigner rather than by filename.
+    // needs a stable name. This also drops AGP's "-unsigned" suffix, so signed
+    // output is told apart with apksigner rather than by filename.
     applicationVariants.all { variant ->
         if (variant.buildType.name == "release") {
             variant.outputs.all { output ->
-                output.outputFileName = "anonomi-postbox-release.apk"
+                output.outputFileName = releaseApkName
             }
         }
     }
@@ -240,14 +242,47 @@ tasks.withType(MergeResources) {
     dependsOn unpackTorBinaries
 }
 
-// Goes to src/official/assets, not src/main: only the official flavour bundles
-// companion APKs, so src/main would reach the fdroid build too. AGP keeps the
-// -unsigned suffix on unsigned output, so excluding it here is enough.
-tasks.register("copyApkToAnonomiAssets", Copy) {
+// A release build without a keystore still succeeds, and the pinned output name
+// means it is spelled exactly like a signed one, so a filename cannot tell them
+// apart. An unsigned companion APK cannot be installed from the hotspot, so ask
+// apksigner instead of trusting the name.
+tasks.register("verifyReleaseApkSigned") {
     dependsOn("assembleRelease")
+    doLast {
+        def apk = file("$buildDir/outputs/apk/release/$releaseApkName")
+        if (!apk.isFile()) {
+            throw new GradleException("no release APK at $apk")
+        }
+        def apksigner = new File(android.sdkDirectory,
+            "build-tools/${android.buildToolsVersion}/apksigner")
+        if (!apksigner.canExecute()) {
+            throw new GradleException("apksigner not executable at $apksigner")
+        }
+        def output = new ByteArrayOutputStream()
+        def verify = exec {
+            commandLine apksigner, "verify", "--print-certs", apk
+            standardOutput = output
+            errorOutput = output
+            ignoreExitValue = true
+        }
+        if (verify.exitValue != 0) {
+            throw new GradleException("$releaseApkName is unsigned or its signature is " +
+                "invalid, refusing to bundle it. Build with keystore.properties in the " +
+                "repo root, or with the ANDROID_KEYSTORE_* environment variables set.\n" +
+                output)
+        }
+        output.toString().readLines()
+            .findAll { it =~ /(?i)certificate SHA-256 digest/ }
+            .each { logger.lifecycle("$releaseApkName ${it.trim()}") }
+    }
+}
+
+// Goes to src/official/assets, not src/main: only the official flavour bundles
+// companion APKs, so src/main would reach the fdroid build too.
+tasks.register("copyApkToAnonomiAssets", Copy) {
+    dependsOn("verifyReleaseApkSigned")
     from("$buildDir/outputs/apk/release") {
-        include("*.apk")
-        exclude("*-unsigned.apk")
+        include(releaseApkName)
         rename { "anonomi-postbox.apk" }
     }
     into("$rootDir/../anonomi-android/src/official/assets/")
