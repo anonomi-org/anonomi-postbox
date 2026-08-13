@@ -1,5 +1,5 @@
 /src/main/resources/*.zip
-# Since tor 0.4.9 the jars hold bare per-architecture binaries, not zips
+# Since tor 0.4.9 and lyrebird 0.6 the jars hold bare per-architecture binaries
 /src/main/resources/aarch64/
 /src/main/resources/armhf/
 /src/main/resources/x86_64/

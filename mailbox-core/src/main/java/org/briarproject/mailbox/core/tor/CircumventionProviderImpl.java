@@ -106,7 +106,11 @@ class CircumventionProviderImpl implements CircumventionProvider {
 		List<String> bridges = new ArrayList<>();
 		Scanner scanner = new Scanner(is);
 		while (scanner.hasNextLine()) {
-			bridges.add("Bridge " + scanner.nextLine());
+			String line = scanner.nextLine().trim();
+			// A blank line would become a bare "Bridge" setting, which tor
+			// rejects, taking down the whole setConf call
+			if (line.isEmpty() || line.startsWith("#")) continue;
+			bridges.add("Bridge " + line);
 		}
 		scanner.close();
 		return bridges;

@@ -45,9 +45,10 @@ public interface CircumventionProvider {
 
 	/**
 	 * Countries where default (publicly listed) obfs4 bridges are likely to
-	 * work. Empty upstream: listed bridges are the first thing censors block,
-	 * so they're only reached via the fallback in
-	 * {@link #getSuitableBridgeTypes(String)}.
+	 * work. Empty upstream: listed bridges are the first thing censors block.
+	 * While it stays empty nothing selects this type, as the fallback in
+	 * {@link #getSuitableBridgeTypes(String)} runs only for countries that
+	 * {@link #doBridgesWork(String)} rejects.
 	 */
 	String[] COUNTRIES_DEFAULT_OBFS4 = {};
 
