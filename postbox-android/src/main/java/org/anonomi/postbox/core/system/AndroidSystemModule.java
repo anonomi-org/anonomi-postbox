@@ -19,6 +19,9 @@
 
 package org.briarproject.mailbox.core.system;
 
+import android.app.Application;
+
+import org.briarproject.android.dontkillmelib.wakelock.AndroidWakeLockManager;
 import org.briarproject.mailbox.core.event.EventExecutor;
 import org.briarproject.mailbox.core.lifecycle.LifecycleManager;
 
@@ -33,6 +36,8 @@ import dagger.Module;
 import dagger.Provides;
 import dagger.hilt.InstallIn;
 import dagger.hilt.components.SingletonComponent;
+
+import static org.briarproject.android.dontkillmelib.wakelock.AndroidWakeLockManagerFactory.createAndroidWakeLockManager;
 
 @Module
 @InstallIn(SingletonComponent.class)
@@ -71,8 +76,8 @@ public class AndroidSystemModule {
 
 	@Provides
 	@Singleton
-	AndroidWakeLockManager provideWakeLockManager(
-			AndroidWakeLockManagerImpl wakeLockManager) {
-		return wakeLockManager;
+	AndroidWakeLockManager provideWakeLockManager(Application app,
+			ScheduledExecutorService scheduledExecutorService) {
+		return createAndroidWakeLockManager(app, scheduledExecutorService);
 	}
 }
