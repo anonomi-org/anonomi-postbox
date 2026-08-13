@@ -1,5 +1,5 @@
-AnonChatX Postbox
-Copyright © 2025 AnonChatX
+Anonomi Postbox
+Copyright © 2025 Anonomi
 
 This project is based on Briar.
 Copyright © 2014–2024 Briar Project
