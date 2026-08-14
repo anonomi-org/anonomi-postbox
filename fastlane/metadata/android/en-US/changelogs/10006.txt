@@ -1,5 +1,9 @@
 Version 1.0.6:
+* Tor now runs through the onionwrapper library instead of a bundled copy of the plugin
+* Bridge lists and censorship circumvention come from onionwrapper as well
 * Hardened how the mailbox accepts connections
 * Request logs no longer record the identifiers that address a folder or a file
 * App data is excluded from cloud backups and from device-to-device transfers
 * The pairing QR code and link can no longer be captured by screenshots
+* Contact addresses now point at anonomi.org
+* Pull requests are built and tested automatically
