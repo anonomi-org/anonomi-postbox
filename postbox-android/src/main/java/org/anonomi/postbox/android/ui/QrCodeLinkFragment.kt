@@ -108,7 +108,7 @@ class QrCodeLinkFragment : Fragment(), MenuProvider {
             copyButton.setOnClickListener {
                 val clipboard = getSystemService(requireContext(), ClipboardManager::class.java)
                     ?: return@setOnClickListener
-                val clip = ClipData.newPlainText("Briar Mailbox text", state.link)
+                val clip = ClipData.newPlainText("Anonomi Postbox link", state.link)
                 clipboard.setPrimaryClip(clip)
                 // Only show a toast for Android 12 and lower.
                 if (SDK_INT <= 32) Toast.makeText(context, R.string.copied, LENGTH_SHORT).show()

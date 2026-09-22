@@ -36,7 +36,7 @@
     <string name="link_description">Scan this QR code with Anonomi</string>
     <string name="link_menu_title">Show as text</string>
     <string name="link_text_title">Link via text</string>
-    <string name="link_text_description">Copy this and paste it into Anonomi Desktop:</string>
+    <string name="link_text_description">This is the same pairing link as the QR code. Anonomi Messenger links a Postbox by scanning the QR code.</string>
     <string name="link_cancel">Cancel Setup</string>
 
     <string name="startup_headline">Starting Anonomi Postbox</string>
