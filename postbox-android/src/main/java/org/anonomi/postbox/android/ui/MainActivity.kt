@@ -19,10 +19,15 @@
 
 package org.anonomi.postbox.android.ui
 
+import android.Manifest.permission.POST_NOTIFICATIONS
 import android.content.Intent
+import android.content.pm.PackageManager.PERMISSION_GRANTED
+import android.os.Build.VERSION.SDK_INT
 import android.os.Bundle
 import android.view.WindowManager.LayoutParams.FLAG_SECURE
+import androidx.activity.result.contract.ActivityResultContracts.RequestPermission
 import androidx.activity.viewModels
+import androidx.core.content.ContextCompat.checkSelfPermission
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
@@ -75,6 +80,12 @@ class MainActivity : AppCompatActivity() {
 
     private var hadBeenStartedOnSave = false
 
+    // The relay runs whether or not this is granted; without it the ongoing
+    // notification is the only thing lost, and that is the sole passive sign
+    // an unattended device is still up.
+    private val notificationPermissionLauncher =
+        registerForActivityResult(RequestPermission()) {}
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         // The link screens show pairing credentials. Debug builds stay capturable
@@ -102,9 +113,17 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
+        requestNotificationPermissionIfNeeded()
+
         launchAndRepeatWhileStarted {
             viewModel.appState.collect { onAppStateChanged(it) }
         }
+    }
+
+    private fun requestNotificationPermissionIfNeeded() {
+        if (SDK_INT < 33) return
+        if (checkSelfPermission(this, POST_NOTIFICATIONS) == PERMISSION_GRANTED) return
+        notificationPermissionLauncher.launch(POST_NOTIFICATIONS)
     }
 
     private fun onAppStateChanged(state: MailboxAppState) {
